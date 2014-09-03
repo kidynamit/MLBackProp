@@ -93,9 +93,7 @@ bool CContMinesweeper::Update(vector<CContCollisionObject*> &objects, vector<CCo
 //-------------------------------------------------------------------------
 void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects, vector<CContMinesweeper*> &sweepers)
 {
-	double			closest_mine_so_far = 99999, closest_rock_so_far = 99999, closest_super_mine_so_far = 99999;
-
-	SVector2D<double>		vClosestObject(0, 0);
+	double			closest_mine_so_far = 99999, closest_rock_so_far = 99999, closest_super_mine_so_far = 99999, closest_sweeper_so_far = 99999;
 
 	//cycle through mines to find closest
 	for (int i=0; i<objects.size(); i++)
@@ -109,7 +107,6 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects,
 			if (len_to_object < closest_mine_so_far)
 			{
 				closest_mine_so_far	= len_to_object;
-				vClosestObject	= objects[i]->getPosition()-m_vPosition;
 				m_iClosestMine = i;
 
 			}
@@ -118,7 +115,6 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects,
 			if (len_to_object < closest_rock_so_far)
 			{
 				closest_rock_so_far	= len_to_object;
-				vClosestObject	= objects[i]->getPosition()-m_vPosition;
 				m_iClosestRock = i;
 			}
 			break;
@@ -126,11 +122,20 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects,
 			if (len_to_object < closest_super_mine_so_far)
 			{
 				closest_super_mine_so_far = len_to_object;
-				vClosestObject	= objects[i]->getPosition()-m_vPosition;
 				m_iClosestSupermine = i;
 			}
 			break;
 		}
+	}
+	for (int i = 0; i < sweepers.size(); ++i) {
+		if (sweepers.at(i)->isDead())
+			continue;
+		double len_to_sweeper = Vec2DLength<double>(sweepers.at(i)->Position()- m_vPosition);
+		if (len_to_sweeper != 0 && len_to_sweeper < closest_sweeper_so_far) {
+			closest_sweeper_so_far = len_to_sweeper;
+			m_iClosestSweeper = i;
+		}
+	
 	}
 }
 //----------------------------- CheckForMine -----------------------------
