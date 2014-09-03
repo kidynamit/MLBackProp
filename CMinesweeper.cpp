@@ -14,15 +14,19 @@ void CMinesweeper::die(){
 bool CMinesweeper::isDead() const{
 	return m_bDead;
 }
-int	CMinesweeper::getClosestMine()
+int	CMinesweeper::getClosestMine() const
 {
 	return m_iClosestMine;
 }
-int	CMinesweeper::getClosestRock()
+int	CMinesweeper::getClosestRock() const
 {
 	return m_iClosestRock;
 }
-int	CMinesweeper::getClosestSupermine()
+int	CMinesweeper::getClosestSupermine() const
 {
 	return m_iClosestSupermine;
+}
+int CMinesweeper::getClosestSweeper() const
+{
+	return m_iClosestSweeper;
 }

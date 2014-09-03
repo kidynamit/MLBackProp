@@ -4,13 +4,6 @@
 #include "SVector2D.h"	
 #include "CParams.h"
 
-struct STarget{
-	int		iTargetIndex;
-	double	dDistanceToTarget;
-	STarget(int targetindex=0, double distanceToTarget=9999 )
-		: iTargetIndex(targetindex), dDistanceToTarget(distanceToTarget) {}
-};
-
 class CMinesweeper
 {
 protected:
@@ -23,6 +16,7 @@ protected:
 	int			m_iClosestMine;
 	int			m_iClosestRock;
 	int			m_iClosestSupermine;
+	int			m_iClosestSweeper;
 
 	bool			m_bDead;
 public:
@@ -36,8 +30,9 @@ public:
 	void		Reset();
 	void		die();
 	bool		isDead() const;
-	int			getClosestMine();
-	int			getClosestRock();
-	int			getClosestSupermine();
+	int			getClosestMine() const;
+	int			getClosestRock() const;
+	int			getClosestSupermine() const;
+	int			getClosestSweeper() const; 
 };
 
