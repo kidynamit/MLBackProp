@@ -270,3 +270,12 @@ double CNeuralNet::getOutput(uint index) const{
 double CNeuralNet::sigmoid(double netInput, double response){
 	return (1 / (1 + exp(-netInput/response)));
 }
+
+uint CNeuralNet::getInputSize() const
+{
+	return inputLayerSize;
+}
+uint CNeuralNet::getOutputSize() const
+{
+	return outputLayerSize;
+}
