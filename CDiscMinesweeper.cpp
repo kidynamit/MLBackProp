@@ -140,11 +140,11 @@ void CDiscMinesweeper::GetClosestObjects(vector<CDiscCollisionObject*> &objects)
 //-----------------------------------------------------------------------
 int CDiscMinesweeper::CheckForObject(vector<CDiscCollisionObject*> &objects, int size)
 {
-	SVector2D<int> DistToObject = m_vPosition - objects[m_iClosestMine.iTargetIndex]->getPosition();
+	SVector2D<int> DistToObject = m_vPosition - objects[m_iClosestMine]->getPosition();
 		
 	if (Vec2DLength<int>(DistToObject) < size+5)
 	{
-			return m_iClosestMine.iTargetIndex;
+			return m_iClosestMine;
 	}
 
 	DistToObject = m_vPosition - objects[m_iClosestRock]->getPosition();

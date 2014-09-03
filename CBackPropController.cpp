@@ -143,8 +143,11 @@ bool CBackPropController::Update(void)
 			(dist_rock > dist_supermine ? dot_supermine : dot_rock) : -1);
 		double dot_mine_supermine_or_rock = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
 			(dist_rock > dist_supermine ? dot_mine_supermine : dot_mine_rock) : 0);
+		double dist_mine_supermine_or_rock_ratio = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
+			((dist_rock < dist_supermine) ? dist_mine_rock / (dist_rock + dist_mine) : dist_mine_supermine / (dist_supermine + dist_mine)) : 1);
 
-		double dots[2] = { dot_mine, dot_supermine_or_rock };
+
+		double dots[3] = { dot_mine, dot_supermine_or_rock, dist_mine_supermine_or_rock_ratio };
 		uint response = _neuralnet->classify((const double*)&dots);
 		if (response == 0){ // turn towards the mine
 			SPoint pt(m_vecObjects[(*s)->getClosestMine()]->getPosition().x,
