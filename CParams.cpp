@@ -39,6 +39,7 @@ int CParams::iNumCopiesElite        = 0;
 bool CParams::bDiscreteGrid			= false;
 int CParams::iGridCellDim			= 10;
 std::string CParams::sTrainingFilename	= "training.txt";
+std::string CParams::sLogFilename		= "simulationLog.txt";
 //this function loads in the parameters from a given file name. Returns
 //false if there is a problem opening the file.
 bool CParams::LoadInParameters(char* szFileName)
@@ -86,6 +87,9 @@ bool CParams::LoadInParameters(char* szFileName)
   grab >> ParamDescription;  
   getline(grab,sTrainingFilename);
   sTrainingFilename = trim(sTrainingFilename);
+  grab >> ParamDescription;
+  getline(grab, sLogFilename);
+  sLogFilename = trim(sLogFilename);
   return true;
 }
  

@@ -66,6 +66,7 @@ public:
   static bool		  bDiscreteGrid;
   static int		  iGridCellDim;
   static std::string  sTrainingFilename;
+  static std::string  sLogFilename;
 
   //ctor
   CParams()
