@@ -249,7 +249,7 @@ method and take the maximum value as the classification
 uint CNeuralNet::classify(const double * const input){
 	feedForward(input);
 	double maxOutput = 0.0;
- 	uint index = 0;
+ 	uint index = -1;
 	uint i = 0;
 	for (auto oNeuron = vecLayers.at(vecLayers.size() - 1).vecNeurons.begin(); 
 			oNeuron != vecLayers.at(vecLayers.size() - 1).vecNeurons.end(); ++oNeuron, ++i)
