@@ -16,7 +16,7 @@ bool CMinesweeper::isDead() const{
 }
 int	CMinesweeper::getClosestMine()
 {
-	return m_iClosestMine.iTargetIndex;
+	return m_iClosestMine;
 }
 int	CMinesweeper::getClosestRock()
 {

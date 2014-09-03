@@ -20,16 +20,14 @@ protected:
 	double			m_dScale;
 
 	//index position of closest mine
-	STarget		m_iClosestMine;
+	int			m_iClosestMine;
 	int			m_iClosestRock;
 	int			m_iClosestSupermine;
-	STarget		m_iTargetMine;
 
 	bool			m_bDead;
 public:
 	CMinesweeper(void):m_dMinesGathered(0),
 					   m_dScale(CParams::iSweeperScale),
-					   m_iTargetMine(STarget(-1)), 
 					   m_bDead(false){}
 	virtual ~CMinesweeper(void);
 

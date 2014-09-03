@@ -3,8 +3,7 @@
 
 CCollisionObject::CCollisionObject(ObjectType objectType = ObjectType::Mine) : 
 									m_ObjectType(objectType),
-									m_bDead(false), 
-									m_bTarget(false)
+									m_bDead(false)
 {
 }
 
@@ -31,13 +30,4 @@ void CCollisionObject::die(){
 }
 bool CCollisionObject::isDead() const{
 	return m_bDead;
-}
-bool CCollisionObject::isTarget() const{
-	return (m_ObjectType == ObjectType::Mine) ? m_bTarget : false;
-}
-void CCollisionObject::setTarget(bool targetStatus){
-	this->m_bTarget = (m_ObjectType == ObjectType::Mine) ? targetStatus: false;
-}
-void CCollisionObject::updateDistance(double distancePredator=99999){
-	m_dPredator = distancePredator;
 }

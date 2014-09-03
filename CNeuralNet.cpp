@@ -26,7 +26,7 @@ SNeuron::SNeuron(int numInputs_) : numInputs(numInputs_+1) // + 1 is For the bia
 {
 	for (int i = 0; i < numInputs; ++i) {
 		double w = RandomClamped();
-			Clamp(w, -MAX_WEIGHTS, MAX_WEIGHTS);
+		Clamp(w, -MAX_WEIGHTS, MAX_WEIGHTS);
 		vecWeights.push_back(w);
 		vecPreviousWeights.push_back(0);
 	}
