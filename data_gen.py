@@ -7,13 +7,13 @@ Created on 14 Feb 2014
 import numpy as np
 from math import acos, pi
 
-no_training_samples_per_dim = 15
-no_inputs = 3
-no_hidden = 2
+no_training_samples_per_dim = 50
+no_inputs = 2
+no_hidden = 3
 no_layers = 1
 no_out = 2
 learning_rate = 0.3
-mse_cutoff = 0.01
+mse_cutoff = 0.001
 file_name = "training_data.txt"
 
 
@@ -37,16 +37,16 @@ dist_mine_super_mine_or_rock_vec = np.linspace (0, 1, no_training_samples_per_di
 #if we're pointing towards the mine do not turn:
 resp_dot_look_mine_vec = np.ones(len(dot_look_mine_vec))
 for i in range(0,len(dot_look_mine_vec)):
-    resp_dot_look_mine_vec[i] = 1 if dot_look_mine_vec[i] < 1 else 0  
+    resp_dot_look_mine_vec[i] = 1 if dot_look_mine_vec[i] < 0.85 else 0  
 #if we're pointing towards the super mine / rock turn sharply, 
 #if we're pointing somewhere between perpendicular and the same direction stop turning:
 resp_dot_look_super_mine_or_rock_vec = np.zeros(len(dot_look_super_mine_or_rock_vec))
 for i in range(0,len(dot_look_super_mine_or_rock_vec)):
-    resp_dot_look_super_mine_or_rock_vec[i] = 1 if dot_look_super_mine_or_rock_vec[i] > 0.25 else 0
+    resp_dot_look_super_mine_or_rock_vec[i] = 1 if dot_look_super_mine_or_rock_vec[i] > 0.5 else 0
 
 resp_dist_mine_super_mine_or_rock_vec = np.zeros(len(dist_mine_super_mine_or_rock_vec))
 for i in range(0,len(dot_look_super_mine_or_rock_vec)):
-    resp_dist_mine_super_mine_or_rock_vec[i] = 1 if dist_mine_super_mine_or_rock_vec[i] < 0.05 else 0
+    resp_dist_mine_super_mine_or_rock_vec[i] = 1 if dist_mine_super_mine_or_rock_vec[i] < 0.3 else 0
 
 f = open(file_name,'w')
 f.write(str(no_training_samples_per_dim**no_inputs)+"\n")
@@ -57,12 +57,11 @@ f.write(str(no_out)+"\n")
 f.write(str(learning_rate)+"\n")
 f.write(str(mse_cutoff)+"\n")
 for m in range(0,no_training_samples_per_dim):
-    for msm in range (0, no_training_samples_per_dim):
+    #for msm in range (0, no_training_samples_per_dim):
         for sm in range(0,no_training_samples_per_dim):
             f.write(str(dot_look_mine_vec[m]) + " " + 
-                    str(dot_look_super_mine_or_rock_vec[sm]) + " " +
-                    str(dist_mine_super_mine_or_rock_vec[msm]) + "\n")
-            f.write(str(resp_dot_look_mine_vec[m] if resp_dot_look_super_mine_or_rock_vec[sm] == 0 and resp_dist_mine_super_mine_or_rock_vec[msm] == 0 else 0) + " " +
-                    str(resp_dot_look_super_mine_or_rock_vec[sm] if resp_dist_mine_super_mine_or_rock_vec[msm] == 0 else resp_dist_mine_super_mine_or_rock_vec[msm]) + "\n")
+                    str(dot_look_super_mine_or_rock_vec[sm]) + "\n") 
+            f.write(str(resp_dot_look_mine_vec[m] if resp_dot_look_super_mine_or_rock_vec[sm] == 0 else 0) + " " +
+                    str(resp_dot_look_super_mine_or_rock_vec[sm]) + "\n")
 #print "Complete... Terminating"                  
 f.close() 
