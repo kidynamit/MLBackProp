@@ -22,7 +22,7 @@
 
 #include "CBackPropController.h"
 
-#define MINE_2_SMINE_OR_ROCK_THRESHOLD			2
+#define MINE_2_SMINE_OR_ROCK_THRESHOLD			12
 #define DOT_MINE_2_DOT_SMINE_OR_ROCK_THRESHOLD	0.02
 #define VIEWING_RADIUS							50
 
@@ -143,11 +143,12 @@ bool CBackPropController::Update(void)
 			(dist_rock > dist_supermine ? dot_supermine : dot_rock) : -1);
 		double dot_mine_supermine_or_rock = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
 			(dist_rock > dist_supermine ? dot_mine_supermine : dot_mine_rock) : 0);
-		double dist_mine_supermine_or_rock_ratio = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
-			((dist_rock < dist_supermine) ? dist_mine_rock / (dist_rock + dist_mine) : dist_mine_supermine / (dist_supermine + dist_mine)) : 1);
+		double dist_mine_supermine_or_rock = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
+			((dist_rock < dist_supermine) ? dist_mine_rock : dist_mine_supermine) : 1);
+		dist_mine_supermine_or_rock = dist_mine_supermine_or_rock / MINE_2_SMINE_OR_ROCK_THRESHOLD;
+		Clamp(dist_mine_supermine_or_rock, 0, 1);
 
-
-		double dots[3] = { dot_mine, dot_supermine_or_rock, dist_mine_supermine_or_rock_ratio };
+		double dots[3] = { dot_mine, dot_supermine_or_rock, dist_mine_supermine_or_rock };
 		uint response = _neuralnet->classify((const double*)&dots);
 		if (response == 0){ // turn towards the mine
 			SPoint pt(m_vecObjects[(*s)->getClosestMine()]->getPosition().x,
@@ -165,6 +166,8 @@ bool CBackPropController::Update(void)
 			}
 		} else if (response == 2) {
 			
+		} else if (response == -1) {
+			// do nothing
 		}
 	}
 
