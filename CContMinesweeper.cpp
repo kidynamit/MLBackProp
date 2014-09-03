@@ -180,6 +180,10 @@ double CContMinesweeper::getSpeed() const
 {
 	return m_dSpeed;
 }
+SVector2D<double> CContMinesweeper::getDirection() const
+{
+	return m_vLookAt;
+}
 //-----------------------------------------------------------------------
 //Accessor to the current look vector of the sweeper (this is normalized
 //already)

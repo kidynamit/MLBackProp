@@ -43,6 +43,7 @@ public:
 	
 	void setSpeed(double speed);
 	double getSpeed() const;
+	SVector2D<double> getDirection() const;
 	SVector2D<double> getLookAt(void) const;
 	CContMinesweeper();
 	
