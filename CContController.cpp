@@ -144,7 +144,7 @@ bool CContController::Update()
 		}
 		simulationLog << itos(m_iIterations).c_str() << ", ";
 		simulationLog << ftos(sum / float(m_vecSweepers.size())).c_str() << ", ";
-		simulationLog << itos(maxMines).c_str() << ", ";
+		simulationLog << itos(maxMines).c_str() << ",";
 		simulationLog << itos(deaths).c_str() << "\n";
 		
 		if (m_iIterations == SIMULATION_LOG_ITERATION_CUTOFF)
