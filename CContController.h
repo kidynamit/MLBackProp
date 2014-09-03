@@ -12,6 +12,7 @@ protected:
 
 	//and the mines
 	vector<CContCollisionObject*> m_vecObjects;
+	ofstream simulationLog;
 public:
 	CContController(HWND hwndMain);
 	virtual ~CContController(void);

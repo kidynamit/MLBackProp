@@ -4,7 +4,7 @@
 CContController::CContController(HWND hwndMain):
 	CController(hwndMain)
 {
-	
+	simulationLog = ofstream (CParams::sLogFilename.c_str());
 }
 
 CContController::~CContController(void)
@@ -13,6 +13,8 @@ CContController::~CContController(void)
 		delete *i;
 	for (auto i = m_vecSweepers.begin(); i != m_vecSweepers.end(); ++i)
 		delete *i;
+	if (m_iIterations < SIMULATION_LOG_ITERATION_CUTOFF)
+		simulationLog.close();
 }
 
 void CContController::InitializeLearningAlgorithm(void)
@@ -71,6 +73,7 @@ bool CContController::Update()
 	//information from its surroundings. The output from the learning algorithm is obtained
 	//and the sweeper is moved. If it encounters a mine its MinesGathered is
 	//updated appropriately,
+	
 	if (m_iTicks++ < CParams::iNumTicks)
 	{
 		for (int i=0; i<m_NumSweepers; ++i)
@@ -139,10 +142,18 @@ bool CContController::Update()
 				deaths++;
 			maxMines = max((*i)->MinesGathered(),maxMines);
 		}
+		simulationLog << itos(m_iIterations).c_str() << ", ";
+		simulationLog << ftos(sum / float(m_vecSweepers.size())).c_str() << ", ";
+		simulationLog << itos(maxMines).c_str() << ", ";
+		simulationLog << itos(deaths).c_str() << "\n";
 		
+		if (m_iIterations == SIMULATION_LOG_ITERATION_CUTOFF)
+			simulationLog.close();
+
 		m_vecAvMinesGathered.push_back(sum/float(m_vecSweepers.size()));
 		m_vecMostMinesGathered.push_back(maxMines);
 		m_vecDeaths.push_back(deaths);
+		
 		//increment the iteration counter
 		++m_iIterations;
 
