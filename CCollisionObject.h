@@ -6,6 +6,7 @@ public:
 protected:
 	ObjectType	m_ObjectType;
 	bool		m_bDead;
+	bool		m_bTarget;
 
 public:
 	CCollisionObject(ObjectType objectType);
@@ -14,5 +15,7 @@ public:
 	ObjectType getType();
 	void Reset();
 	void die();
+	void target();
 	bool isDead() const;
+	bool isTarget() const;
 };

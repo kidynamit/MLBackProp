@@ -26,3 +26,7 @@ int	CMinesweeper::getClosestSupermine() const
 {
 	return m_iClosestSupermine;
 }
+int CMinesweeper::getTargetMine() const
+{
+	return m_iTargetMine;
+}

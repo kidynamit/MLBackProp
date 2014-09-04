@@ -115,11 +115,11 @@ bool CBackPropController::Update(void)
 		//compute, the dot between the look vector and vector to the closest mine:
 		SVector2D<double> vec_rock(m_vecObjects[(*s)->getClosestRock()]->getPosition() - (*s)->Position());
 		SVector2D<double> vec_supermine(m_vecObjects[(*s)->getClosestSupermine()]->getPosition() - (*s)->Position()); 
-		SVector2D<double> vec_mine(m_vecObjects[(*s)->getClosestMine()]->getPosition() - (*s)->Position());
+		SVector2D<double> vec_mine(m_vecObjects[(*s)->getTargetMine()]->getPosition() - (*s)->Position());
 
 		Vec2DNormalize(vec_mine); Vec2DNormalize(vec_rock); Vec2DNormalize(vec_supermine);
 
-		double dot_mine = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getClosestMine()]);
+		double dot_mine = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getTargetMine()]);
 		double dot_rock = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getClosestRock()]);
 		double dot_supermine = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getClosestSupermine()]);
 
@@ -127,12 +127,12 @@ bool CBackPropController::Update(void)
 		double dot_mine_rock = Vec2DDot(vec_mine, vec_supermine);
 
 		double dist_rock = Vec2DLength(m_vecObjects[(*s)->getClosestRock()]->getPosition() - (*s)->Position());
-		double dist_mine = Vec2DLength(m_vecObjects[(*s)->getClosestMine()]->getPosition() - (*s)->Position());
+		double dist_mine = Vec2DLength(m_vecObjects[(*s)->getTargetMine()]->getPosition() - (*s)->Position());
 		double dist_supermine = Vec2DLength(m_vecObjects[(*s)->getClosestSupermine()]->getPosition() - (*s)->Position());
 
-		double dist_mine_supermine = Vec2DLength(m_vecObjects[(*s)->getClosestMine()]->getPosition() 
+		double dist_mine_supermine = Vec2DLength(m_vecObjects[(*s)->getTargetMine()]->getPosition() 
 			- m_vecObjects[(*s)->getClosestSupermine()]->getPosition());
-		double dist_mine_rock = Vec2DLength(m_vecObjects[(*s)->getClosestMine()]->getPosition()
+		double dist_mine_rock = Vec2DLength(m_vecObjects[(*s)->getTargetMine()]->getPosition()
 			- m_vecObjects[(*s)->getClosestRock()]->getPosition());
 
 		double dot_supermine_or_rock = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
@@ -142,26 +142,25 @@ bool CBackPropController::Update(void)
 		double dist_mine_supermine_or_rock = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
 			((dist_rock < dist_supermine) ? dist_mine_rock : dist_mine_supermine) : 1);
 
-		Clamp(dot_mine, 0, 1); Clamp(dot_rock, 0, 1); Clamp(dot_supermine, 0, 1);
+		Clamp(dot_supermine_or_rock, 0, 1); Clamp(dot_supermine, 0, 1);
 
-		dot_mine = (dist_mine < VIEWING_RADIUS) ? dot_mine : 0;
-		dot_supermine = (dist_supermine < VIEWING_RADIUS) ? dot_supermine : 0;
-		dot_rock = (dist_rock < VIEWING_RADIUS) ? dot_rock : 0;
-
-		double dots[3] = { dot_mine, dot_supermine, dot_rock };
+		double dots[2] = { dot_mine, dot_supermine_or_rock };
 		uint response = _neuralnet->classify((const double*)&dots);
 		if (response == 0){ // turn towards the mine
-			SPoint pt(m_vecObjects[(*s)->getClosestMine()]->getPosition().x,
-				m_vecObjects[(*s)->getClosestMine()]->getPosition().y);
+			SPoint pt(m_vecObjects[(*s)->getTargetMine()]->getPosition().x,
+				m_vecObjects[(*s)->getTargetMine()]->getPosition().y);
 			(*s)->turn(pt, 1);
-		} else if (response == 2) {//turn away from a rock or supermine
-			SPoint pt(m_vecObjects[(*s)->getClosestRock()]->getPosition().x,
+		}
+		else if (response == 1) {//turn away from a rock or supermine
+			if (dist_rock < dist_supermine) {
+				SPoint pt(m_vecObjects[(*s)->getClosestRock()]->getPosition().x,
 				m_vecObjects[(*s)->getClosestRock()]->getPosition().y);
-			(*s)->turn(pt, 1, false);
-		} else if (response == 1) {
-			SPoint pt(m_vecObjects[(*s)->getClosestSupermine()]->getPosition().x,
-				m_vecObjects[(*s)->getClosestSupermine()]->getPosition().y);
-			(*s)->turn(pt, 1, false);
+				(*s)->turn(pt, 1, false);
+			} else {
+				SPoint pt(m_vecObjects[(*s)->getClosestSupermine()]->getPosition().x,
+					m_vecObjects[(*s)->getClosestSupermine()]->getPosition().y);
+				(*s)->turn(pt, 1, false);
+			}
 		} else if (response == -1) {
 			// do nothing
 		}

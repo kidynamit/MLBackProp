@@ -94,7 +94,7 @@ bool CContMinesweeper::Update(vector<CContCollisionObject*> &objects)
 void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 {
 	double			closest_mine_so_far = 99999, closest_rock_so_far = 99999, closest_super_mine_so_far = 99999, closest_sweeper_so_far = 99999;
-
+	m_iTargetMine = -1; // set to unreachable value
 	//cycle through mines to find closest
 	for (int i=0; i<objects.size(); i++)
 	{
@@ -108,6 +108,8 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 			{
 				closest_mine_so_far	= len_to_object;
 				m_iClosestMine = i;
+				if (!objects[i]->isTarget())
+					m_iTargetMine = i;
 
 			}
 			break;
@@ -127,6 +129,7 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 			break;
 		}
 	}
+	m_iTargetMine = (m_iTargetMine == -1) ? m_iClosestMine : m_iTargetMine ;
 }
 //----------------------------- CheckForMine -----------------------------
 //

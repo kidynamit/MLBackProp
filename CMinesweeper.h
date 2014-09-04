@@ -16,6 +16,7 @@ protected:
 	int			m_iClosestMine;
 	int			m_iClosestRock;
 	int			m_iClosestSupermine;
+	int			m_iTargetMine;
 
 	bool			m_bDead;
 public:
@@ -32,5 +33,6 @@ public:
 	int			getClosestMine() const;
 	int			getClosestRock() const;
 	int			getClosestSupermine() const;
+	int			getTargetMine() const;
 };
 
