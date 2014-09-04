@@ -26,7 +26,3 @@ int	CMinesweeper::getClosestSupermine() const
 {
 	return m_iClosestSupermine;
 }
-int CMinesweeper::getClosestSweeper() const
-{
-	return m_iClosestSweeper;
-}

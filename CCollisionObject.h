@@ -16,4 +16,3 @@ public:
 	void die();
 	bool isDead() const;
 };
-

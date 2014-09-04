@@ -13,9 +13,9 @@
  Chapter 18 of Russel and Norvig (2010).
  Artificial Intelligence - A Modern Approach.
  */
-#define MAX_WEIGHTS		0.5
-#define ACTIVE_RESPONSE 1
-#define MOMENTUM_RATE	0.9
+#define MAX_WEIGHTS			0.05
+#define ACTIVE_RESPONSE		1
+#define MOMENTUM_RATE		0.9
 
 #include "CNeuralNet.h"
 
@@ -269,13 +269,4 @@ double CNeuralNet::getOutput(uint index) const{
 
 double CNeuralNet::sigmoid(double netInput, double response){
 	return (1 / (1 + exp(-netInput/response)));
-}
-
-uint CNeuralNet::getInputSize() const
-{
-	return inputLayerSize;
-}
-uint CNeuralNet::getOutputSize() const
-{
-	return outputLayerSize;
 }

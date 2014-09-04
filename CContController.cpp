@@ -80,7 +80,7 @@ bool CContController::Update()
 		{
 			if (m_vecSweepers[i]->isDead()) continue; //skip if dead
 			//update the position
-			if (!(m_vecSweepers[i])->Update(m_vecObjects, m_vecSweepers))
+			if (!(m_vecSweepers[i])->Update(m_vecObjects))
 			{
 				//error in processing the learning algorithm
 				MessageBox(m_hwndMain, "An error occured while processing!", "Error", MB_OK);

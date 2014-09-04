@@ -67,7 +67,7 @@ void CContMinesweeper::WorldTransform(vector<SPoint> &sweeper)
 //	and acceleration. This is then applied to current velocity vector.
 //
 //-----------------------------------------------------------------------
-bool CContMinesweeper::Update(vector<CContCollisionObject*> &objects, vector<CContMinesweeper*> &sweepers)
+bool CContMinesweeper::Update(vector<CContCollisionObject*> &objects)
 {
 	//update Look At 
 	m_vLookAt.x = cos(m_dRotation);
@@ -81,7 +81,7 @@ bool CContMinesweeper::Update(vector<CContCollisionObject*> &objects, vector<CCo
 	if (m_vPosition.x < 0) m_vPosition.x = CParams::WindowWidth;
 	if (m_vPosition.y > CParams::WindowHeight) m_vPosition.y = 0;
 	if (m_vPosition.y < 0) m_vPosition.y = CParams::WindowHeight;
-	GetClosestObjects(objects, sweepers);	
+	GetClosestObjects(objects);	
 	return true;
 }
 
@@ -91,7 +91,7 @@ bool CContMinesweeper::Update(vector<CContCollisionObject*> &objects, vector<CCo
 //	returns the vector from the sweeper to the closest mine
 //
 //-------------------------------------------------------------------------
-void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects, vector<CContMinesweeper*> &sweepers)
+void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 {
 	double			closest_mine_so_far = 99999, closest_rock_so_far = 99999, closest_super_mine_so_far = 99999, closest_sweeper_so_far = 99999;
 
@@ -126,16 +126,6 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects,
 			}
 			break;
 		}
-	}
-	for (int i = 0; i < sweepers.size(); ++i) {
-		if (sweepers.at(i)->isDead())
-			continue;
-		double len_to_sweeper = Vec2DLength<double>(sweepers.at(i)->Position()- m_vPosition);
-		if (len_to_sweeper != 0 && len_to_sweeper < closest_sweeper_so_far) {
-			closest_sweeper_so_far = len_to_sweeper;
-			m_iClosestSweeper = i;
-		}
-	
 	}
 }
 //----------------------------- CheckForMine -----------------------------
@@ -179,10 +169,6 @@ void CContMinesweeper::setSpeed(double speed_factor_of_full_throttle)
 double CContMinesweeper::getSpeed() const
 {
 	return m_dSpeed;
-}
-SVector2D<double> CContMinesweeper::getDirection() const
-{
-	return m_vLookAt;
 }
 //-----------------------------------------------------------------------
 //Accessor to the current look vector of the sweeper (this is normalized

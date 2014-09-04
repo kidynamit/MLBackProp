@@ -116,6 +116,7 @@ bool CBackPropController::Update(void)
 		SVector2D<double> vec_rock(m_vecObjects[(*s)->getClosestRock()]->getPosition() - (*s)->Position());
 		SVector2D<double> vec_supermine(m_vecObjects[(*s)->getClosestSupermine()]->getPosition() - (*s)->Position()); 
 		SVector2D<double> vec_mine(m_vecObjects[(*s)->getClosestMine()]->getPosition() - (*s)->Position());
+
 		Vec2DNormalize(vec_mine); Vec2DNormalize(vec_rock); Vec2DNormalize(vec_supermine);
 
 		double dot_mine = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getClosestMine()]);
@@ -133,11 +134,6 @@ bool CBackPropController::Update(void)
 			- m_vecObjects[(*s)->getClosestSupermine()]->getPosition());
 		double dist_mine_rock = Vec2DLength(m_vecObjects[(*s)->getClosestMine()]->getPosition()
 			- m_vecObjects[(*s)->getClosestRock()]->getPosition());
-		//cheat a bit here... passing the distance into the neural net as well increases the search space dramatrically... :
-		bool avoid_supermine = abs(dot_mine - dot_supermine) < DOT_MINE_2_DOT_SMINE_OR_ROCK_THRESHOLD
-			&& dist_mine_supermine < MINE_2_SMINE_OR_ROCK_THRESHOLD;
-		bool avoid_rock = dist_mine_rock < MINE_2_SMINE_OR_ROCK_THRESHOLD
-			&& abs(dot_mine - dot_rock) < DOT_MINE_2_DOT_SMINE_OR_ROCK_THRESHOLD;
 
 		double dot_supermine_or_rock = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
 			(dist_rock > dist_supermine ? dot_supermine : dot_rock) : -1);
@@ -145,32 +141,31 @@ bool CBackPropController::Update(void)
 			(dist_rock > dist_supermine ? dot_mine_supermine : dot_mine_rock) : 0);
 		double dist_mine_supermine_or_rock = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
 			((dist_rock < dist_supermine) ? dist_mine_rock : dist_mine_supermine) : 1);
-		dist_mine_supermine_or_rock = dist_mine_supermine_or_rock / MINE_2_SMINE_OR_ROCK_THRESHOLD;
-		Clamp(dist_mine_supermine_or_rock, 0, 1);
 
-		double dots[3] = { dot_mine, dot_supermine_or_rock, dist_mine_supermine_or_rock };
+		Clamp(dot_mine, 0, 1); Clamp(dot_rock, 0, 1); Clamp(dot_supermine, 0, 1);
+
+		dot_mine = (dist_mine < VIEWING_RADIUS) ? dot_mine : 0;
+		dot_supermine = (dist_supermine < VIEWING_RADIUS) ? dot_supermine : 0;
+		dot_rock = (dist_rock < VIEWING_RADIUS) ? dot_rock : 0;
+
+		double dots[3] = { dot_mine, dot_supermine, dot_rock };
 		uint response = _neuralnet->classify((const double*)&dots);
 		if (response == 0){ // turn towards the mine
 			SPoint pt(m_vecObjects[(*s)->getClosestMine()]->getPosition().x,
-					  m_vecObjects[(*s)->getClosestMine()]->getPosition().y); 
-			(*s)->turn(pt,1);
-		} else if (response == 1) {//turn away from a rock or supermine
-			if (dist_supermine < dist_rock) {
-				SPoint pt(m_vecObjects[(*s)->getClosestSupermine()]->getPosition().x,
-					m_vecObjects[(*s)->getClosestSupermine()]->getPosition().y);
-				(*s)->turn(pt, 1, false);
-			} else {
-				SPoint pt(m_vecObjects[(*s)->getClosestRock()]->getPosition().x,
-					m_vecObjects[(*s)->getClosestRock()]->getPosition().y);
-				(*s)->turn(pt, 1, false);
-			}
-		} else if (response == 2) {
-			
+				m_vecObjects[(*s)->getClosestMine()]->getPosition().y);
+			(*s)->turn(pt, 1);
+		} else if (response == 2) {//turn away from a rock or supermine
+			SPoint pt(m_vecObjects[(*s)->getClosestRock()]->getPosition().x,
+				m_vecObjects[(*s)->getClosestRock()]->getPosition().y);
+			(*s)->turn(pt, 1, false);
+		} else if (response == 1) {
+			SPoint pt(m_vecObjects[(*s)->getClosestSupermine()]->getPosition().x,
+				m_vecObjects[(*s)->getClosestSupermine()]->getPosition().y);
+			(*s)->turn(pt, 1, false);
 		} else if (response == -1) {
 			// do nothing
 		}
 	}
-
 	return true; //method returns true if successful. Do not delete this.
 }
 

@@ -38,17 +38,16 @@ private:
 
 	double			m_dSpeed;
 	//sets the internal closest object variables for the 3 types of objects
-	void GetClosestObjects(vector<CContCollisionObject*> &objects, vector<CContMinesweeper*> &sweepers);
+	void GetClosestObjects(vector<CContCollisionObject*> &objects);
 public:
 	
 	void setSpeed(double speed);
 	double getSpeed() const;
-	SVector2D<double> getDirection() const;
 	SVector2D<double> getLookAt(void) const;
 	CContMinesweeper();
 	
 	//updates the information from the sweepers enviroment
-	bool			Update(vector<CContCollisionObject*> &objects, vector<CContMinesweeper*> &sweepers);
+	bool			Update(vector<CContCollisionObject*> &objects);
 
 	//used to transform the sweepers vertices prior to rendering
 	void			WorldTransform(vector<SPoint> &sweeper);

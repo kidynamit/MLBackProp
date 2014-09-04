@@ -55,8 +55,6 @@ public:
 	void train(const double ** const inputs,const double ** const outputs, uint trainingSetSize); //you may modify this to do std::vector<std::vector<double> > or do boost multiarray or something else if you want
 	uint classify(const double * const input); //you may modify this to do std::vector<double> if you want
 	double getOutput(uint index) const; 
-	uint getInputSize() const;
-	uint getOutputSize() const;
 	inline double sigmoid(double netInput, double response);
 	virtual ~CNeuralNet();
 private:
