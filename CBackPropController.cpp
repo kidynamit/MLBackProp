@@ -22,8 +22,6 @@
 
 #include "CBackPropController.h"
 
-#define MINE_2_SMINE_OR_ROCK_THRESHOLD			12
-#define DOT_MINE_2_DOT_SMINE_OR_ROCK_THRESHOLD	0.02
 #define VIEWING_RADIUS							50
 
 
@@ -142,7 +140,7 @@ bool CBackPropController::Update(void)
 		double dist_mine_supermine_or_rock = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
 			((dist_rock < dist_supermine) ? dist_mine_rock : dist_mine_supermine) : 1);
 
-		Clamp(dot_supermine_or_rock, 0, 1); Clamp(dot_supermine, 0, 1);
+		Clamp(dot_supermine_or_rock, 0, 1);
 
 		double dots[2] = { dot_mine, dot_supermine_or_rock };
 		uint response = _neuralnet->classify((const double*)&dots);

@@ -108,8 +108,10 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 			{
 				closest_mine_so_far	= len_to_object;
 				m_iClosestMine = i;
-				if (!objects[i]->isTarget())
+				if (!objects[i]->isTarget()) {
+					objects[i]->target();
 					m_iTargetMine = i;
+				}
 
 			}
 			break;
