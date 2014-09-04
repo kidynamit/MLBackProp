@@ -7,7 +7,7 @@ Created on 03 Sep 2014
 import numpy as np
 from math import acos, pi
 
-no_training_samples_per_dim = 8
+no_training_samples_per_dim = 50
 no_inputs = 3
 no_hidden = 4
 no_layers = 1
