@@ -170,7 +170,7 @@ int CContMinesweeper::CheckForObject(vector<CContCollisionObject*> &objects, dou
 //-----------------------------------------------------------------------
 void CContMinesweeper::setSpeed(double speed_factor_of_full_throttle, double multiplier)
 {
-	m_dSpeed = speed_factor_of_full_throttle * multiplier * double(MAX_SPEED_IN_PIXELS)/(max(CParams::WindowHeight, CParams::WindowWidth)) + 0.4f;
+	m_dSpeed = speed_factor_of_full_throttle * multiplier * double(MAX_SPEED_IN_PIXELS)/(max(CParams::WindowHeight, CParams::WindowWidth)) + 0.5f;
 }
 double CContMinesweeper::getSpeed() const
 {

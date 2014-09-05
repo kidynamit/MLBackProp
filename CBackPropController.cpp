@@ -23,7 +23,7 @@
 #include "CBackPropController.h"
 
 #define VIEWING_RADIUS				50
-#define MINE_SUPERMINE_ROCK_CUTOFF	12
+#define MINE_SUPERMINE_ROCK_CUTOFF	5
 
 
 CBackPropController::CBackPropController(HWND hwndMain):
@@ -133,9 +133,15 @@ bool CBackPropController::Update(void)
 		double dot_supermine_or_rock = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
 			(dist_rock > dist_supermine ? dot_supermine : dot_rock) : -1);
 
-		Clamp(dot_supermine_or_rock, 0, 1);
-		double speed_multiplier = (CParams::iNumMines / (CParams::iNumRocks + CParams::iNumSuperMines + CParams::iNumMines)) * 12;
+		double danger_factor = (CParams::iNumMines / (CParams::iNumRocks + CParams::iNumSuperMines + CParams::iNumMines));
+		
+		if (danger_factor < 0.3 && (dist_mine_supermine < MINE_SUPERMINE_ROCK_CUTOFF || dist_mine_rock < MINE_SUPERMINE_ROCK_CUTOFF)) {
+			dot_target_mine = 0;
+		} 
 
+		Clamp(dot_supermine_or_rock, 0, 1);
+		double speed_multiplier = danger_factor * 24;
+		(*s)->setSpeed(min(dist_target_mine / 2, min(dist_supermine, dist_rock)), speed_multiplier);
 		double dots[2] = { dot_target_mine, dot_supermine_or_rock };
 		uint response = _neuralnet->classify((const double*)&dots);
 		if (response == 0){ // turn towards the mine
@@ -153,7 +159,7 @@ bool CBackPropController::Update(void)
 				(*s)->turn(pt, 1, false);
 			}
 		}
-		(*s)->setSpeed(speed_multiplier);
+		
 	}
 	return true; //method returns true if successful. Do not delete this.
 }

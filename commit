@@ -1,7 +1,6 @@
-[TASK]Optimizing BackProp
+[TASK] Changing Training Data (0.86, 0.45)
 
-Resolves: Reset the targetted mine value before getting the target Mine
-in: CCollisionObject.cpp, CContMinesweeper.cpp
+Resolves: Set the limit values of the training data to 
+0.86 for the dot_look_mine and 0.45 for the dot_look_supermine_or_rock
 
-Releases: Increased the speeds of the sweepers
-in: CBackPropController.cpp and CContMinesweeper.h 	
+Releases: None

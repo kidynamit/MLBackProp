@@ -12,7 +12,7 @@ no_inputs = 2
 no_hidden = 3
 no_layers = 1
 no_out = 2
-learning_rate = 0.3
+learning_rate = 0.05
 mse_cutoff = 0.01
 file_name = "training_data.txt"
 
@@ -32,7 +32,7 @@ dot_look_supermine_or_rock_vec = np.linspace(0,1,no_training_samples_per_dim)
 #if we're pointing towards the mine do not turn:
 resp_dot_look_mine_vec = np.ones(len(dot_look_mine_vec))
 for i in range(0,len(dot_look_mine_vec)):
-    resp_dot_look_mine_vec[i] = 1 if dot_look_mine_vec[i] < 0.95 else 0
+    resp_dot_look_mine_vec[i] = 1 if dot_look_mine_vec[i] < 0.86 else 0
 #if we're pointing towards the super mine / rock turn sharply, 
 #if we're pointing somewhere between perpendicular and the same direction stop turning:
 resp_dot_look_supermine_or_rock_vec = np.zeros(len(dot_look_supermine_or_rock_vec))
@@ -51,8 +51,7 @@ for m in range(0,no_training_samples_per_dim):
     for r in range(0,no_training_samples_per_dim):
         f.write(str(dot_look_mine_vec[m]) + " " +
                 str(dot_look_supermine_or_rock_vec[r]) + "\n")
-        iscolinear = abs (acos (dot_look_supermine_or_rock_vec[r]) - acos (dot_look_mine_vec[m])) < 0.07 and False
-        f.write(str(resp_dot_look_mine_vec[m] if resp_dot_look_supermine_or_rock_vec[r] == 0 and not iscolinear else 0) + " " +
-                str(resp_dot_look_supermine_or_rock_vec[r] if not iscolinear else 1 ) + "\n")
+        f.write(str(resp_dot_look_mine_vec[m] if resp_dot_look_supermine_or_rock_vec[r] == 0 else 0) + " " +
+                str(resp_dot_look_supermine_or_rock_vec[r]  ) + "\n")
 #print "Complete... Terminating"                  
 f.close() 
