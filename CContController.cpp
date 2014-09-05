@@ -78,7 +78,11 @@ bool CContController::Update()
 	{
 		for (int i=0; i<m_NumSweepers; ++i)
 		{
-			if (m_vecSweepers[i]->isDead()) continue; //skip if dead
+			if (m_vecSweepers[i]->isDead()) {
+				m_vecObjects[m_vecSweepers[i]->getTargetMine()]->setTarget(false);
+				continue; //skip if dead 
+			}
+
 			//update the position
 			if (!(m_vecSweepers[i])->Update(m_vecObjects))
 			{

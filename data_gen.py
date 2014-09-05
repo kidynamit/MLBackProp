@@ -9,10 +9,10 @@ from math import acos, pi
 
 no_training_samples_per_dim = 50
 no_inputs = 2
-no_hidden = 3
+no_hidden = 2
 no_layers = 1
 no_out = 2
-learning_rate = 0.05
+learning_rate = 0.3
 mse_cutoff = 0.01
 file_name = "training_data.txt"
 
@@ -32,12 +32,12 @@ dot_look_supermine_or_rock_vec = np.linspace(0,1,no_training_samples_per_dim)
 #if we're pointing towards the mine do not turn:
 resp_dot_look_mine_vec = np.ones(len(dot_look_mine_vec))
 for i in range(0,len(dot_look_mine_vec)):
-    resp_dot_look_mine_vec[i] = 1 if dot_look_mine_vec[i] < 0.86 else 0
+    resp_dot_look_mine_vec[i] = 1 if dot_look_mine_vec[i] < 0.88 else 0
 #if we're pointing towards the super mine / rock turn sharply, 
 #if we're pointing somewhere between perpendicular and the same direction stop turning:
 resp_dot_look_supermine_or_rock_vec = np.zeros(len(dot_look_supermine_or_rock_vec))
 for i in range(0,len(dot_look_supermine_or_rock_vec)):
-    resp_dot_look_supermine_or_rock_vec[i] = 1 if dot_look_supermine_or_rock_vec[i] > 0.45 else 0
+    resp_dot_look_supermine_or_rock_vec[i] = 1 if dot_look_supermine_or_rock_vec[i] > 0.5 else 0
 
 f = open(file_name,'w')
 f.write(str(no_training_samples_per_dim**no_inputs)+"\n")

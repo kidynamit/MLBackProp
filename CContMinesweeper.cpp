@@ -25,7 +25,6 @@ void CContMinesweeper::Reset()
 	m_vPosition = SVector2D<double>((RandFloat() * CParams::WindowWidth), 
 					                (RandFloat() * CParams::WindowHeight));
 	CMinesweeper::Reset();
-
 	//and the rotation
 	m_dRotation = RandFloat()*CParams::dTwoPi;
 
