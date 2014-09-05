@@ -18,8 +18,8 @@
 #include "CParams.h"
 #include "CContCollisionObject.h"
 #include "CMinesweeper.h"
-#define MAX_TURNING_RATE_IN_DEGREES 2.0
-#define MAX_SPEED_IN_PIXELS 0.5
+#define MAX_TURNING_RATE_IN_DEGREES	2.0
+#define MAX_SPEED_IN_PIXELS			8.0
 using namespace std;
 
 
@@ -41,7 +41,7 @@ private:
 	void GetClosestObjects(vector<CContCollisionObject*> &objects);
 public:
 	
-	void setSpeed(double speed);
+	void setSpeed(double speed,double multiplier=1.0f);
 	double getSpeed() const;
 	SVector2D<double> getLookAt(void) const;
 	CContMinesweeper();

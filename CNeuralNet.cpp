@@ -229,7 +229,7 @@ void CNeuralNet::train(const double** const inputs_, const double ** const outpu
 
 			accMSE += tempmse;
 		}
-		accMSE = accMSE / (trainingSetSize * outputLayerSize);
+		accMSE = accMSE / (trainingSetSize);
 		std::cout << "netMSE:= " << accMSE <<", ";
 		//std::cout << "maxMSE:= " << maxMSE << ", ";
 	} while ( accMSE > mseCutoff);

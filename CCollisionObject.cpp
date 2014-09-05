@@ -25,13 +25,14 @@ CCollisionObject::ObjectType CCollisionObject::getType()
 void CCollisionObject::Reset()
 {
 	this->m_bDead = false;
+	this->m_bTarget = false;
 }
 void CCollisionObject::die(){
 	this->m_bDead = true;
 	this->m_bTarget = false;
 }
-void CCollisionObject::target(){
-	this->m_bTarget = (!this->m_bDead && this->m_ObjectType == ObjectType::Mine) ? true : false;
+void CCollisionObject::setTarget(bool newTarget){
+	this->m_bTarget = (!this->m_bDead && this->m_ObjectType == ObjectType::Mine) ? newTarget : false;
 }
 
 bool CCollisionObject::isDead() const{

@@ -24,7 +24,6 @@ void CContMinesweeper::Reset()
 	//reset the sweepers positions
 	m_vPosition = SVector2D<double>((RandFloat() * CParams::WindowWidth), 
 					                (RandFloat() * CParams::WindowHeight));
-	
 	CMinesweeper::Reset();
 
 	//and the rotation
@@ -93,23 +92,25 @@ bool CContMinesweeper::Update(vector<CContCollisionObject*> &objects)
 //-------------------------------------------------------------------------
 void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 {
-	double			closest_mine_so_far = 99999, closest_rock_so_far = 99999, closest_super_mine_so_far = 99999, closest_sweeper_so_far = 99999;
-	m_iTargetMine = -1; // set to unreachable value
+	double			closest_mine_so_far = 99999, closest_rock_so_far = 99999, closest_super_mine_so_far = 99999;
 	//cycle through mines to find closest
-	for (int i=0; i<objects.size(); i++)
+	if (m_iTargetMine >= 0 && m_iTargetMine  < objects.size())
+		objects[m_iTargetMine]->setTarget(false);
+	m_iTargetMine = -1;
+	for (int i = 0; i < objects.size(); i++)
 	{
-		if (objects[i]->isDead()) 
+		if (objects[i]->isDead())
 			continue; //skip if object was destroyed earlier
 		double len_to_object = Vec2DLength<double>(objects[i]->getPosition() - m_vPosition);
 
-		switch(objects[i]->getType()){
+		switch (objects[i]->getType()){
 		case CCollisionObject::ObjectType::Mine:
 			if (len_to_object < closest_mine_so_far)
 			{
-				closest_mine_so_far	= len_to_object;
+				closest_mine_so_far = len_to_object;
 				m_iClosestMine = i;
 				if (!objects[i]->isTarget()) {
-					objects[i]->target();
+					objects[i]->setTarget();
 					m_iTargetMine = i;
 				}
 
@@ -118,7 +119,7 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 		case CCollisionObject::ObjectType::Rock:
 			if (len_to_object < closest_rock_so_far)
 			{
-				closest_rock_so_far	= len_to_object;
+				closest_rock_so_far = len_to_object;
 				m_iClosestRock = i;
 			}
 			break;
@@ -167,9 +168,9 @@ int CContMinesweeper::CheckForObject(vector<CContCollisionObject*> &objects, dou
 // Getters and setters for speed
 // speed_factor_of_full_throttle should be between 0.0 and 1.0
 //-----------------------------------------------------------------------
-void CContMinesweeper::setSpeed(double speed_factor_of_full_throttle)
+void CContMinesweeper::setSpeed(double speed_factor_of_full_throttle, double multiplier)
 {
-	m_dSpeed = speed_factor_of_full_throttle * MAX_SPEED_IN_PIXELS;
+	m_dSpeed = speed_factor_of_full_throttle * multiplier * double(MAX_SPEED_IN_PIXELS)/(max(CParams::WindowHeight, CParams::WindowWidth)) + 0.4f;
 }
 double CContMinesweeper::getSpeed() const
 {

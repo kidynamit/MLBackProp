@@ -1,7 +1,33 @@
-﻿Build started 04/09/2014 17:44:00.
+﻿Build started 05/09/2014 19:35:33.
      1>Project "D:\Share\MLBackProp\smart sweepers.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /Gy- /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug\\" /Fd".\Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt CCollisionObject.cpp CContController.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /Gy- /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug\\" /Fd".\Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt CBackPropController.cpp CBasicEA.cpp CContController.cpp CContMinesweeper.cpp CEAController.cpp main.cpp
+         CBackPropController.cpp
+     1>d:\share\mlbackprop\c2dmatrix.h(102): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\share\mlbackprop\c2dmatrix.h(108): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\share\mlbackprop\c2dmatrix.h(110): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\share\mlbackprop\cbackpropcontroller.cpp(43): warning C4101: 'dist_effect_cutoff' : unreferenced local variable
+     1>d:\share\mlbackprop\cbackpropcontroller.cpp(143): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\share\mlbackprop\cbackpropcontroller.cpp(148): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\share\mlbackprop\cbackpropcontroller.cpp(152): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         Generating Code...
+         Compiling...
+         main.cpp
+     1>d:\share\mlbackprop\c2dmatrix.h(102): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\share\mlbackprop\c2dmatrix.h(108): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\share\mlbackprop\c2dmatrix.h(110): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\share\mlbackprop\main.cpp(293): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+         CEAController.cpp
+     1>d:\share\mlbackprop\c2dmatrix.h(102): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\share\mlbackprop\c2dmatrix.h(108): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\share\mlbackprop\c2dmatrix.h(110): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\share\mlbackprop\ceacontroller.cpp(66): warning C4018: '<' : signed/unsigned mismatch
+         CContMinesweeper.cpp
+     1>d:\share\mlbackprop\c2dmatrix.h(102): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\share\mlbackprop\c2dmatrix.h(108): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\share\mlbackprop\c2dmatrix.h(110): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\share\mlbackprop\ccontminesweeper.cpp(97): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\share\mlbackprop\ccontminesweeper.cpp(100): warning C4018: '<' : signed/unsigned mismatch
          CContController.cpp
      1>d:\share\mlbackprop\c2dmatrix.h(102): warning C4018: '<' : signed/unsigned mismatch
      1>d:\share\mlbackprop\c2dmatrix.h(108): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
@@ -9,7 +35,10 @@
      1>d:\share\mlbackprop\ccontcontroller.cpp(143): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
      1>d:\share\mlbackprop\ccontcontroller.cpp(146): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
      1>d:\share\mlbackprop\ccontcontroller.cpp(217): warning C4018: '<' : signed/unsigned mismatch
-         CCollisionObject.cpp
+         CBasicEA.cpp
+     1>d:\share\mlbackprop\c2dmatrix.h(102): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\share\mlbackprop\c2dmatrix.h(108): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\share\mlbackprop\c2dmatrix.h(110): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
          Generating Code...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\Debug\smart sweepers.exe" /INCREMENTAL /NOLOGO odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:".\Debug\smart sweepers.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\Debug\smart sweepers.lib" /MACHINE:X86 /SAFESEH .\Debug\Script1.res
@@ -37,4 +66,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.56
+Time Elapsed 00:00:04.87

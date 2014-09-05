@@ -1,0 +1,7 @@
+[TASK]Optimizing BackProp
+
+Resolves: Reset the targetted mine value before getting the target Mine
+in: CCollisionObject.cpp, CContMinesweeper.cpp
+
+Releases: Increased the speeds of the sweepers
+in: CBackPropController.cpp and CContMinesweeper.h 	

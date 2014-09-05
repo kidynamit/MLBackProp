@@ -15,7 +15,7 @@ public:
 	ObjectType getType();
 	void Reset();
 	void die();
-	void target();
+	void setTarget(bool newTarget=true);
 	bool isDead() const;
 	bool isTarget() const;
 };
