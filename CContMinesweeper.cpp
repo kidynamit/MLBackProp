@@ -27,7 +27,6 @@ void CContMinesweeper::Reset()
 	CMinesweeper::Reset();
 	//and the rotation
 	m_dRotation = RandFloat()*CParams::dTwoPi;
-
 	return;
 }
 //---------------------WorldTransform--------------------------------
@@ -79,7 +78,7 @@ bool CContMinesweeper::Update(vector<CContCollisionObject*> &objects)
 	if (m_vPosition.x < 0) m_vPosition.x = CParams::WindowWidth;
 	if (m_vPosition.y > CParams::WindowHeight) m_vPosition.y = 0;
 	if (m_vPosition.y < 0) m_vPosition.y = CParams::WindowHeight;
-	GetClosestObjects(objects);	
+	GetClosestObjects(objects);
 	return true;
 }
 
@@ -91,11 +90,11 @@ bool CContMinesweeper::Update(vector<CContCollisionObject*> &objects)
 //-------------------------------------------------------------------------
 void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 {
-	double			closest_mine_so_far = 99999, closest_rock_so_far = 99999, closest_super_mine_so_far = 99999;
+	double			closest_mine_so_far = 99999, closest_rock_so_far = 99999, closest_super_mine_so_far = 99999, closest_att_mine_so_far = 99999;
 	//cycle through mines to find closest
-	if (m_iTargetMine >= 0 && m_iTargetMine  < objects.size())
-		objects[m_iTargetMine]->setTarget(false);
-	m_iTargetMine = -1;
+	if (m_iTargetMine != -1)
+		m_iTargetMine = (!objects[m_iTargetMine]->isAttainable() || objects[m_iTargetMine]->isDead()) ? -1 : m_iTargetMine;
+	int closestAttainableMine = -1;
 	for (int i = 0; i < objects.size(); i++)
 	{
 		if (objects[i]->isDead())
@@ -104,15 +103,20 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 
 		switch (objects[i]->getType()){
 		case CCollisionObject::ObjectType::Mine:
+			if (objects[i]->isAttainable()) {
+				if (!objects[i]->isTarget() && m_iTargetMine == -1) {
+					objects[i]->setTarget();
+					m_iTargetMine = (objects[i]->isTarget()) ? i : m_iTargetMine;
+				}
+				if (len_to_object < closest_att_mine_so_far)  {
+					closest_att_mine_so_far = len_to_object;
+					closestAttainableMine = i;
+				}
+			}
 			if (len_to_object < closest_mine_so_far)
 			{
 				closest_mine_so_far = len_to_object;
 				m_iClosestMine = i;
-				if (!objects[i]->isTarget()) {
-					objects[i]->setTarget();
-					m_iTargetMine = i;
-				}
-
 			}
 			break;
 		case CCollisionObject::ObjectType::Rock:
@@ -131,7 +135,11 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 			break;
 		}
 	}
-	m_iTargetMine = (m_iTargetMine == -1) ? m_iClosestMine : m_iTargetMine ;
+	if (closestAttainableMine == -1) 
+		closestAttainableMine = m_iClosestMine;
+	if (m_iTargetMine == -1)
+		m_iTargetMine = closestAttainableMine;
+	return;
 }
 //----------------------------- CheckForMine -----------------------------
 //
@@ -169,7 +177,7 @@ int CContMinesweeper::CheckForObject(vector<CContCollisionObject*> &objects, dou
 //-----------------------------------------------------------------------
 void CContMinesweeper::setSpeed(double speed_factor_of_full_throttle, double multiplier)
 {
-	m_dSpeed = speed_factor_of_full_throttle * multiplier * double(MAX_SPEED_IN_PIXELS)/(max(CParams::WindowHeight, CParams::WindowWidth)) + 0.5f;
+	m_dSpeed = speed_factor_of_full_throttle * multiplier * MAX_SPEED_IN_PIXELS/(max(CParams::WindowHeight, CParams::WindowWidth)) + 0.5f;
 }
 double CContMinesweeper::getSpeed() const
 {

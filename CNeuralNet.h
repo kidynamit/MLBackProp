@@ -14,10 +14,13 @@
 #include <cstring>
 #include <stdio.h>
 #include <stdint.h>
-
 #include <cassert>
 
 #include "utils.h"
+
+#define MAX_WEIGHTS			0.05
+#define ACTIVE_RESPONSE		5.0
+#define MOMENTUM_RATE		0.3
 
 typedef unsigned int uint;
 class CBasicEA; //forward declare EA class, which will have the power to access weight vectors
@@ -26,14 +29,7 @@ struct SNeuron {
 	int numInputs;
 	std::vector<double> vecWeights, vecInputs, vecPreviousWeights;
 	double partialOutput=0.0, errorTerm=0.0;
-	double calculatePartialOutput(void) {
-		partialOutput = 0.0;
-		for (auto cInput = vecInputs.begin(), cWeight = vecWeights.begin(); 
-				cInput != vecInputs.end(); 
-				++cInput, ++cWeight)
-			partialOutput += (*(cInput))* (*cWeight);
-		return partialOutput;
-	}
+	double calculatePartialOutput(void);
 	SNeuron(int numInputs_);
 };
 
@@ -55,7 +51,7 @@ public:
 	void train(const double ** const inputs,const double ** const outputs, uint trainingSetSize); //you may modify this to do std::vector<std::vector<double> > or do boost multiarray or something else if you want
 	uint classify(const double * const input); //you may modify this to do std::vector<double> if you want
 	double getOutput(uint index) const; 
-	inline double sigmoid(double netInput, double response);
+	inline double sigmoid(double netInput, double response=ACTIVE_RESPONSE);
 	virtual ~CNeuralNet();
 private:
 	uint inputLayerSize, outputLayerSize, hiddenLayerSize, nHiddenLayers;

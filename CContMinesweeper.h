@@ -18,7 +18,7 @@
 #include "CParams.h"
 #include "CContCollisionObject.h"
 #include "CMinesweeper.h"
-#define MAX_TURNING_RATE_IN_DEGREES	2.0
+#define MAX_TURNING_RATE_IN_DEGREES 2.0
 #define MAX_SPEED_IN_PIXELS			5.0
 using namespace std;
 

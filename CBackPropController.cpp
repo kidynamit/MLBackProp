@@ -19,12 +19,7 @@
 			  \___\___/_||_| \__|_| \___/_||_\___||_|   
                                             
  */
-
 #include "CBackPropController.h"
-
-#define VIEWING_RADIUS				50
-#define MINE_SUPERMINE_ROCK_CUTOFF	2
-
 
 CBackPropController::CBackPropController(HWND hwndMain):
 	CContController(hwndMain)
@@ -75,12 +70,13 @@ void CBackPropController::InitializeLearningAlgorithm(void)
 		}
 		std::cout << "Done!" << std::endl;
 		f.close();
-	//init the neural net and train it
+		//init the neural net and train it
 		_neuralnet = new CNeuralNet(no_inputs,no_hidden,no_layers,no_out,learning_rate,mse_cutoff);
-		std::cout << "Training network ... ";
+		std::cout << "Training network ... " << std::endl;
 		_neuralnet->train((const double **)inp,(const double **)out,no_training_samples);
 		std::cout << "Done!" << std::endl;
-	//release the memory we allocated
+		
+		//release the memory we allocated
 		for (uint32_t i = 0; i < no_training_samples; ++i){
 			delete[] inp[i];
 			delete[] out[i];
@@ -112,18 +108,12 @@ bool CBackPropController::Update(void)
 	CContController::Update(); //call the parent's class update. Do not delete this.
 	for (auto s = m_vecSweepers.begin(); s != m_vecSweepers.end(); ++s) {
 		//compute, the dot between the look vector and vector to the closest mine:
-		SVector2D<double> vec_rock(m_vecObjects[(*s)->getClosestRock()]->getPosition() - (*s)->Position());
-		SVector2D<double> vec_supermine(m_vecObjects[(*s)->getClosestSupermine()]->getPosition() - (*s)->Position());
-		SVector2D<double> vec_mine(m_vecObjects[(*s)->getTargetMine()]->getPosition() - (*s)->Position());
-		Vec2DNormalize(vec_mine); Vec2DNormalize(vec_rock); Vec2DNormalize(vec_supermine);
 
 		double dot_target_mine = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getTargetMine()]);
-		double dot_mine = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getClosestMine()]);
 		double dot_rock = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getClosestRock()]);
 		double dot_supermine = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getClosestSupermine()]);
 
 		double dist_rock = Vec2DLength(m_vecObjects[(*s)->getClosestRock()]->getPosition() - (*s)->Position());
-		double dist_mine = Vec2DLength(m_vecObjects[(*s)->getClosestMine()]->getPosition() - (*s)->Position());
 		double dist_target_mine = Vec2DLength(m_vecObjects[(*s)->getTargetMine()]->getPosition() - (*s)->Position());
 		double dist_supermine = Vec2DLength(m_vecObjects[(*s)->getClosestSupermine()]->getPosition() - (*s)->Position());
 
@@ -132,18 +122,18 @@ bool CBackPropController::Update(void)
 
 		double dot_supermine_or_rock = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
 			(dist_rock > dist_supermine ? dot_supermine : dot_rock) : -1);
+		double dist_mine_supermine_or_rock_ratio = min(dist_mine_rock, dist_mine_supermine) / MINE_SUPERMINE_ROCK_CUTOFF;
 
 		double danger_factor = (CParams::iNumMines / (CParams::iNumRocks + CParams::iNumSuperMines + CParams::iNumMines));
+		(*s)->setSpeed(min(dist_target_mine / 2, min(dist_rock, dist_supermine)), 1+int(danger_factor*6) );
+	
+		Clamp(dist_mine_supermine_or_rock_ratio, 0, 0.5);
+		Clamp(dot_supermine_or_rock, 0, 0.5);
+		Clamp(dot_target_mine, 0.5, 1);
 		
-		if (danger_factor < 0.3 && (dist_mine_supermine < MINE_SUPERMINE_ROCK_CUTOFF || dist_mine_rock < MINE_SUPERMINE_ROCK_CUTOFF)) {
-			dot_supermine_or_rock = 1;
-		} 
-
-		Clamp(dot_supermine_or_rock, 0, 1);
-		double speed_multiplier = danger_factor * 24;
-		(*s)->setSpeed(min(dist_target_mine / 2, min(dist_supermine, dist_rock)), 2);
-		double dots[2] = { dot_target_mine, dot_supermine_or_rock };
+		double dots[3] = { dot_target_mine, dot_supermine_or_rock, dist_mine_supermine_or_rock_ratio };
 		uint response = _neuralnet->classify((const double*)&dots);
+		
 		if (response == 0){ // turn towards the mine
 			SPoint pt(m_vecObjects[(*s)->getTargetMine()]->getPosition().x,
 				m_vecObjects[(*s)->getTargetMine()]->getPosition().y);
@@ -158,6 +148,21 @@ bool CBackPropController::Update(void)
 					m_vecObjects[(*s)->getClosestSupermine()]->getPosition().y);
 				(*s)->turn(pt, 1, false);
 			}
+		} else if (response == 2) {
+			if (dist_mine_rock < dist_mine_supermine) {
+				SPoint pt(m_vecObjects[(*s)->getClosestRock()]->getPosition().x,
+					m_vecObjects[(*s)->getClosestRock()]->getPosition().y);
+				(*s)->turn(pt, 1, false);
+			}
+			else {
+				SPoint pt(m_vecObjects[(*s)->getClosestSupermine()]->getPosition().x,
+					m_vecObjects[(*s)->getClosestSupermine()]->getPosition().y);
+				(*s)->turn(pt, 1, (danger_factor < 0.3));  // SUICIDE
+			}
+			m_vecObjects[(*s)->getClosestMine()]->setAttainable(false);
+
+		} else if (response == -1) {
+			// Do Nothing (Maintain the course of actions)
 		}
 		
 	}

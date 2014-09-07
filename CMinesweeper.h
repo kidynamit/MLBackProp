@@ -22,7 +22,7 @@ protected:
 public:
 	CMinesweeper(void):m_dMinesGathered(0),
 					   m_dScale(CParams::iSweeperScale),
-					   m_bDead(false){}
+					   m_bDead(false), m_iTargetMine(-1){}
 	virtual ~CMinesweeper(void);
 
 	void		IncrementMinesGathered(){++m_dMinesGathered;}
@@ -34,5 +34,6 @@ public:
 	int			getClosestRock() const;
 	int			getClosestSupermine() const;
 	int			getTargetMine() const;
+	void		setTargetMine(int iMine);
 };
 

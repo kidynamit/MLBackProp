@@ -1,9 +1,13 @@
-[TASK] Complete Testing of Environment 3
+[TASK] Completed Testing
 
-Resolves: Set the default value of the speed multiplier for Env3
+Resolves: Modified targetting of mines to include sweeper death scenario
+in: CContMinesweeper.cpp CCollisionObject.cpp
+
+Releases: Randomized mine positions
+in: CContController.cpp
+Included suicide behaviour for the sweepers
 in: CBackPropController.cpp
 
-Releases: Reset the target mines on sweeper deaths
-in: CContController.cpp
+TODO: Optimize the averages in Environment 2 and 3
 
-TODO: Implement the same thing for ENV 1 and ENV 2
+WARNING: Do not change or delete the env[1|2|3]_log files

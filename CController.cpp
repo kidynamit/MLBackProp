@@ -60,6 +60,7 @@ CController::~CController()
 	DeleteObject(m_RedPen);
 	DeleteObject(m_GreenPen);
 	DeleteObject(m_OldPen);
+
 }
 
 //--------------------------PlotStats-------------------------------------

@@ -13,10 +13,6 @@
  Chapter 18 of Russel and Norvig (2010).
  Artificial Intelligence - A Modern Approach.
  */
-#define MAX_WEIGHTS			0.05
-#define ACTIVE_RESPONSE		1
-#define MOMENTUM_RATE		0.9
-
 #include "CNeuralNet.h"
 
 /**
@@ -31,6 +27,15 @@ SNeuron::SNeuron(int numInputs_) : numInputs(numInputs_+1) // + 1 is For the bia
 		vecPreviousWeights.push_back(0);
 	}
 	partialOutput = 0;
+}
+double SNeuron::calculatePartialOutput(void) 
+{
+	partialOutput = 0.0;
+	for (auto cInput = vecInputs.begin(), cWeight = vecWeights.begin();
+		cInput != vecInputs.end();
+		++cInput, ++cWeight)
+		partialOutput += (*(cInput))* (*cWeight);
+	return partialOutput;
 }
 
 /** 
@@ -47,15 +52,17 @@ SNeuronLayer::SNeuronLayer(int numNeurons_, int numInputsPerNeuron_) : numNeuron
  for the weights of both input->hidden and hidden->output layers, as well as the input, hidden
  and output layers.
 */
-CNeuralNet::CNeuralNet(uint inputLayerSize_, uint hiddenLayerSize_, uint nHiddenLayers_,  uint outputLayerSize_, double lRate_, double mse_cutoff_)
-: inputLayerSize(inputLayerSize_), outputLayerSize(outputLayerSize_), 
-hiddenLayerSize(hiddenLayerSize_), nHiddenLayers(nHiddenLayers_ <= 0 ? 1 : nHiddenLayers_), 
-learningRate(lRate_), mseCutoff(mse_cutoff_)
+CNeuralNet::CNeuralNet(uint inputLayerSize_, uint hiddenLayerSize_, 
+						uint nHiddenLayers_,  uint outputLayerSize_, 
+						double lRate_, double mse_cutoff_)
+					: inputLayerSize(inputLayerSize_), outputLayerSize(outputLayerSize_), 
+					hiddenLayerSize(hiddenLayerSize_), nHiddenLayers(nHiddenLayers_ < 0 ? 1 : nHiddenLayers_), 
+					learningRate(lRate_), mseCutoff(mse_cutoff_)
 {
 	std::cout << "Creating Neural Network ... " ;
 	std::cout << "INPUT " << inputLayerSize << ", ";
 	std::cout << "HIDDEN " << hiddenLayerSize << ", ";
-	std::cout << "NUM HIDDEN " << nHiddenLayers << ", ";
+	std::cout << "NUM LAYERS " << nHiddenLayers + 1 << ", ";
 	std::cout << "OUTPUT "<< outputLayerSize << std::endl;
 	std::cout.flush();
 	initWeights();
@@ -116,7 +123,7 @@ void CNeuralNet::feedForward(const double * const inputs) {
 			//std::cout << " }" << std::endl;
 			assert(iNeuron->vecInputs.size() == iNeuron->vecWeights.size ());
 			iNeuron->calculatePartialOutput();
-			(iNeuron->partialOutput) = (sigmoid(iNeuron->partialOutput, ACTIVE_RESPONSE));
+			(iNeuron->partialOutput) = (sigmoid(iNeuron->partialOutput));
 			layerOutput.push_back(iNeuron->partialOutput);
 		}
 	}
@@ -182,16 +189,11 @@ This computes the mean squared error
 A very handy formula to test numeric output with. You may want to commit this one to memory
 */
 double CNeuralNet::meanSquaredError(const double * const desiredOutput){
-	/*TODO:
-	sum <- 0
-	for i in 0...outputLayerSize -1 do
-		err <- desiredoutput[i] - actualoutput[i]
-		sum <- sum + err*err
-	return sum / outputLayerSize
-	*/
 	double sum = 0.0;
-	for (uint i = 0; i < outputLayerSize; ++i)
-		sum += (desiredOutput[i] - getOutput(i)) * (desiredOutput[i] - getOutput(i));
+	for (uint i = 0; i < outputLayerSize; ++i) {
+		double err = (desiredOutput[i] - getOutput(i));
+		sum += err * err;
+	} 
 	return sum / outputLayerSize;
 }
 /**
@@ -215,7 +217,10 @@ void CNeuralNet::train(const double** const inputs_, const double ** const outpu
 	}
 	uint trainingIterations = 0;
 	double maxMSE, accMSE;
-	do {
+	int count = 0, displayIter = 100;
+	std::cout << "Displaying Network MSE after every " << displayIter << " iterations" << endl;
+	std::cout << "(Restart training if it is taking long to train <CTRL><SHIFT><F5>)" << endl;
+	do { 
 		maxMSE = 0.0; accMSE = 0.0;
 		// Training the Network
 		for (uint32_t data = 0; data < trainingSetSize; ++data) {
@@ -229,10 +234,15 @@ void CNeuralNet::train(const double** const inputs_, const double ** const outpu
 
 			accMSE += tempmse;
 		}
-		accMSE = accMSE / (trainingSetSize);
-		std::cout << "netMSE:= " << accMSE <<", ";
+		accMSE = accMSE / (trainingSetSize * outputLayerSize);
+		if (count % displayIter == 0) 
+			std::cout << "netMSE:= " << accMSE <<", ";
+		count++;
 		//std::cout << "maxMSE:= " << maxMSE << ", ";
 	} while ( accMSE > mseCutoff);
+	cout << endl;
+	cout << "Training Complete ... " << endl;
+	cout << "Generating Stats: " << count << " iterations @ netMSE " << accMSE << " ... ";
 
 	// Deallocate Memory
 	for (uint32_t i = 0; i < trainingSetSize; ++i) {
@@ -264,7 +274,7 @@ uint CNeuralNet::classify(const double * const input){
 Gets the output at the specified index
 */
 double CNeuralNet::getOutput(uint index) const{
-	return vecLayers.at(vecLayers.size() - 1).vecNeurons.at(index).partialOutput; //TODO: fix me
+	return vecLayers.at(vecLayers.size() - 1).vecNeurons.at(index).partialOutput; 
 }
 
 double CNeuralNet::sigmoid(double netInput, double response){

@@ -79,7 +79,6 @@ bool CContController::Update()
 		for (int i=0; i<m_NumSweepers; ++i)
 		{
 			if (m_vecSweepers[i]->isDead()) {
-				m_vecObjects[m_vecSweepers[i]->getTargetMine()]->setTarget(false);
 				continue; //skip if dead 
 			}
 
@@ -118,6 +117,7 @@ bool CContController::Update()
 					//CContCollisionObject* oldObject = m_vecObjects[GrabHit];
 					//oldObject->die();
 					(m_vecSweepers[i])->die();
+					m_vecObjects[m_vecSweepers[i]->getTargetMine()]->setTarget(false);
 					break;
 					}
 				case CContCollisionObject::SuperMine:
@@ -127,6 +127,7 @@ bool CContController::Update()
 					oldObject->die();
 																
 					(m_vecSweepers[i])->die();
+					m_vecObjects[m_vecSweepers[i]->getTargetMine()]->setTarget(false);
 					break;
 					}
 				}
@@ -167,13 +168,15 @@ bool CContController::Update()
 		//reset the sweepers positions etc
 		for (int i=0; i<m_NumSweepers; ++i)
 		{
-			(m_vecSweepers[i])->Reset();
+			(m_vecSweepers[i])->Reset(); 
 		}
 		//reset supermine
 		for (int i = 0; i < m_NumMines+m_NumRocks+m_NumSuperMines; ++i)
 		{
 			if (m_vecObjects[i]->getType() == CCollisionObject::ObjectType::SuperMine)
 				m_vecObjects[i]->Reset();
+			if (m_vecObjects[i]->getType() == CCollisionObject::ObjectType::Mine)
+				m_vecObjects[i]->setPosition(SVector2D<double>(RandFloat() * cxClient, RandFloat() * cyClient));
 		}
 	}
 	return true;
