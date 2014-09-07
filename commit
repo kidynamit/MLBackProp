@@ -1,13 +1,11 @@
-[TASK] Completed Testing
+[TASK] Completed Testing: Optimized Environment 3
 
-Resolves: Modified targetting of mines to include sweeper death scenario
-in: CContMinesweeper.cpp CCollisionObject.cpp
+Resolves: Modified targetting of mines to include closest mine scenario
+in: CContMinesweeper.cpp 
 
-Releases: Randomized mine positions
-in: CContController.cpp
-Included suicide behaviour for the sweepers
+Releases: Forgot to mention clamping of input data on previous commit
 in: CBackPropController.cpp
 
-TODO: Optimize the averages in Environment 2 and 3
+TODO: Optimize the averages in Environment 2 and Refactoring (incl. Commenting)
 
-WARNING: Do not change or delete the env[1|2|3]_log files
+WARNING: 

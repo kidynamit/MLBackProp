@@ -117,6 +117,12 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 			{
 				closest_mine_so_far = len_to_object;
 				m_iClosestMine = i;
+				if (!objects[i]->isTarget() && objects[i]->isAttainable()) {
+					if (m_iTargetMine != -1)
+						objects[m_iTargetMine]->setTarget(false);
+					objects[i]->setTarget();
+					m_iTargetMine = i;
+				}
 			}
 			break;
 		case CCollisionObject::ObjectType::Rock:
