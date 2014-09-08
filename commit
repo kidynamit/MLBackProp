@@ -1,11 +1,9 @@
-[TASK] Completed Testing: Optimized Environment 3
+[TASK] Completed Testing: Optimized Environment 2
 
-Resolves: Modified targetting of mines to include closest mine scenario
-in: CContMinesweeper.cpp 
+Resolves: NONEE
 
-Releases: Forgot to mention clamping of input data on previous commit
-in: CBackPropController.cpp
+Releases: NONE
 
-TODO: Optimize the averages in Environment 2 and Refactoring (incl. Commenting)
+TODO: Refactoring (incl. Commenting)
 
-WARNING: 
+WARNING: DO NOT DELETE env[1|2|3]_log

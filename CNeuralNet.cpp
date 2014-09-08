@@ -113,6 +113,7 @@ void CNeuralNet::feedForward(const double * const inputs) {
 			std::copy(layerOutput.begin(), layerOutput.end(), vecInputs.begin());
 			vecInputs.push_back(1.0); // Add in the BIAS
 			layerOutput.clear(); 
+			
 		}
 		for (auto iNeuron = iLayer->vecNeurons.begin(); iNeuron != iLayer->vecNeurons.end(); ++iNeuron) {
 			iNeuron->vecInputs.clear(); iNeuron->vecInputs.resize(vecInputs.size());
