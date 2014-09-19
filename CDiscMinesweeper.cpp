@@ -170,6 +170,7 @@ void CDiscMinesweeper::setRotation(ROTATION_DIRECTION dir)
 {
 	m_dRotation = dir;
 }
+
 ROTATION_DIRECTION CDiscMinesweeper::getRotation()
 {
 	return m_dRotation;

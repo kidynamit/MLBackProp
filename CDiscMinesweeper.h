@@ -20,7 +20,7 @@
 #include "CMinesweeper.h"
 using namespace std;
 
-enum ROTATION_DIRECTION {NORTH=1, SOUTH=3, EAST=0, WEST=2};
+enum ROTATION_DIRECTION {NORTH=1, SOUTH=2, EAST=0, WEST=3};
 class CDiscMinesweeper:public CMinesweeper
 {
 

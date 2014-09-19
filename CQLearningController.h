@@ -3,18 +3,25 @@
 #include "CParams.h"
 #include "CDiscCollisionObject.h"
 #include <cmath>
+#include <cassert>
+
+#define MAX_REWARD 			50.0
+#define MIN_REWARD 			-50.0
+#define LEARNING_FACTOR  	0.7
+#define DISCOUNT_FACTOR		0.2
 
 typedef unsigned int uint;
 class CQLearningController :
 	public CDiscController
 {
 private:
-	uint _grid_size_x;
-	uint _grid_size_y;
+	int _grid_size_x;
+	int _grid_size_y;
+	double *** m_qTable;
 public:
 	CQLearningController(HWND hwndMain);
 	virtual void InitializeLearningAlgorithm(void);
-	double R(uint x, uint y, uint sweeper_no);
+	double R(int x, int y, int sweeper_no);
 	virtual bool Update(void);
 	virtual ~CQLearningController(void);
 };

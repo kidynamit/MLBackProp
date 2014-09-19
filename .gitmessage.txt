@@ -1,8 +1,11 @@
-[BUGFIX|TASK]
+[TASK] Q-Learning: The Beginning of RL
 
-Resolves:
-Releases:
+Resolves: NONE
 
-TODO:
+Releases: Finished adding the Q-Learning Algorithm. 
+in: CQLearningController.cpp
+
+TODO: Reward Function and Testing; change the iNumRocks to 0  
+in: CParams.ini
 
 WARNING:
