@@ -1,11 +1,13 @@
 #include "CDiscController.h"
 
+#define SIMULATION_LOG_ITERATION_CUTOFF		100
 
 CDiscController::CDiscController(HWND hwndMain):
 	CController(hwndMain)
 {
 	assert(CParams::WindowHeight % CParams::iGridCellDim == 0);
 	assert(CParams::WindowWidth % CParams::iGridCellDim == 0);
+	simulationLog = ofstream(CParams::sLogFilename.c_str());
 }
 
 CDiscController::~CDiscController(void)
@@ -14,6 +16,8 @@ CDiscController::~CDiscController(void)
 		delete *i;
 	for (auto i = m_vecObjects.begin(); i != m_vecObjects.end(); ++i)
 		delete *i;
+	if (m_iIterations < SIMULATION_LOG_ITERATION_CUTOFF)
+		simulationLog.close();
 }
 
 void CDiscController::InitializeLearningAlgorithm(void)
@@ -96,13 +100,16 @@ bool CDiscController::Update()
 
 			if (GrabHit >= 0)
 			{
+				if (m_vecObjects[GrabHit]->isDead())
+					continue;
+
 				switch(m_vecObjects[GrabHit]->getType()){
 				case CDiscCollisionObject::Mine:
 					{
 					//we have discovered a mine so increase MinesGathered
 					(m_vecSweepers[i])->IncrementMinesGathered();
-					CDiscCollisionObject* oldObject = m_vecObjects[GrabHit];
-					oldObject->die();
+					m_vecObjects[GrabHit]->die();
+					assert(m_vecObjects[GrabHit]->isDead() == true);
 					break;
 					}
 				case CDiscCollisionObject::Rock:
@@ -116,8 +123,8 @@ bool CDiscController::Update()
 				case CDiscCollisionObject::SuperMine:
 					{
 					//destroy both the sweeper and the supermine until both reincarnate in the next round
-					CDiscCollisionObject* oldObject = m_vecObjects[GrabHit];
-					oldObject->die();
+					m_vecObjects[GrabHit]->die();
+					assert(m_vecObjects[GrabHit]->isDead() == true);
 					(m_vecSweepers[i])->die();
 					break;
 					}
@@ -138,7 +145,14 @@ bool CDiscController::Update()
 				deaths++;
 			maxMines = max((*i)->MinesGathered(),maxMines);
 		}
-		
+		simulationLog << itos(m_iIterations).c_str() << ",";
+		simulationLog << ftos(sum / float(m_vecSweepers.size())).c_str() << ",";
+		simulationLog << itos(maxMines).c_str() << ",";
+		simulationLog << itos(deaths).c_str() << "\n";
+
+		if (m_iIterations == SIMULATION_LOG_ITERATION_CUTOFF)
+			simulationLog.close();
+
 		m_vecAvMinesGathered.push_back(sum/float(m_vecSweepers.size()));
 		m_vecMostMinesGathered.push_back(maxMines);
 		m_vecDeaths.push_back(deaths);

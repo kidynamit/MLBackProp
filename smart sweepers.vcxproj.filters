@@ -34,9 +34,6 @@
     <Filter Include="Source Files\Base Objects">
       <UniqueIdentifier>{e6647ea0-397e-4d76-8fbc-30f370da4d4d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Helpers">
-      <UniqueIdentifier>{0f658abc-a836-4b79-a129-45bf2468def4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Continuous Environment">
       <UniqueIdentifier>{63643960-2ec4-4127-b9a8-5bc208e159d3}</UniqueIdentifier>
     </Filter>
@@ -58,6 +55,9 @@
     <Filter Include="Source Files\Prac Controllers">
       <UniqueIdentifier>{cf222856-259c-490e-af0f-617da3e2656d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Discrete Environment\Helpers">
+      <UniqueIdentifier>{0f658abc-a836-4b79-a129-45bf2468def4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CParams.cpp">
@@ -76,10 +76,10 @@
       <Filter>Source Files\Continuous Environment</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
-      <Filter>Source Files\Helpers</Filter>
+      <Filter>Source Files\Discrete Environment\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="CTimer.cpp">
-      <Filter>Source Files\Helpers</Filter>
+      <Filter>Source Files\Discrete Environment\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="CCollisionObject.cpp">
       <Filter>Source Files\Base Objects</Filter>
@@ -174,7 +174,7 @@
       <Filter>Header Files\Prac Controllers</Filter>
     </ClInclude>
     <ClInclude Include="CQLearningController.h">
-      <Filter>Header Files\Prac Controllers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

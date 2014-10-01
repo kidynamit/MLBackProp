@@ -2,10 +2,8 @@
 
 Resolves: NONE
 
-Releases: Finished adding the Q-Learning Algorithm. 
-in: CQLearningController.cpp
+Releases: Completed Qlearning prac
 
-TODO: Reward Function and Testing; change the iNumRocks to 0  
-in: CParams.ini
+TODO: 
 
 WARNING:

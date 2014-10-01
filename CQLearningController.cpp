@@ -25,9 +25,9 @@ CQLearningController::CQLearningController(HWND hwndMain):
 	for (int i = 0; i < CParams::iNumSweepers; i++) {
 		m_qTable[i] = new double*[_grid_size_x * _grid_size_y];
 		for (int j = 0; j < _grid_size_x * _grid_size_y; j++) 
-			m_qTable[i][j] = new double[4];
+			m_qTable[i][j] = new double[12];
 	}
-
+	m_iCollectedMines = new int[CParams::iNumSweepers];
 }
 /**
  The update method should allocate a Q table for each sweeper (this can
@@ -39,24 +39,40 @@ void CQLearningController::InitializeLearningAlgorithm(void)
 {
 	for (int i_sweepers = 0; i_sweepers < CParams::iNumSweepers; i_sweepers++)
 		for (int i_states = 0; i_states < _grid_size_x * _grid_size_y; i_states++)
-			for (int i_actions = 0; i_actions < 4; i_actions++)
-				m_qTable[i_sweepers][i_states][i_actions] = 0.0;
+			for (int i_actions = 0; i_actions < 12; i_actions++)
+				m_qTable[i_sweepers][i_states][i_actions] = /*(i_actions <= 4)*/ 0.0;
 }
 /**
  The immediate reward function. This computes a reward upon achieving the goal state of
  collecting all the mines on the field. It may also penalize movement to encourage exploring all directions and 
  of course for hitting supermines/rocks!
 */
-double CQLearningController::R(int x,int y, int sweeper_no){
+double CQLearningController::R(int x, int y, int sweeper_no){
 	//TODO: roll your own here!
-	int state = x * CParams::iGridCellDim + y;
+	if ((m_vecSweepers[sweeper_no]->isDead()))
+		return MIN_REWARD * 100;
+	std::vector<CDiscCollisionObject *>::iterator collision = std::find_if(m_vecObjects.begin(), m_vecObjects.end(),
+		[&sweeper_no, this](CDiscCollisionObject * obj)->bool
+	{
+		return obj->getPosition().x == this->m_vecSweepers[sweeper_no]->Position().x &&
+			obj->getPosition().y == this->m_vecSweepers[sweeper_no]->Position().y;
+	});
+	if (collision == m_vecObjects.end())
+		return 0.0;
+	else if ((*collision)->getType() == CCollisionObject::Mine)
+		//m_iCollectedMines[sweeper_no] < m_vecSweepers[sweeper_no]->MinesGathered())
+		return MAX_REWARD * 40;
+	else if ((*collision)->getType() == CCollisionObject::SuperMine)
+		return  MIN_REWARD * 40;
+	else
+		return -1;
 
-	double i_immediateReward = 0.0;
-
-	SVector2D<int> pos_rock = m_vecObjects[m_vecSweepers[sweeper_no]->getClosestRock ()]->getPosition();
-	SVector2D<int> pos_mine = m_vecObjects[m_vecSweepers[sweeper_no]->getClosestMine ()]->getPosition();
-	SVector2D<int> pos_supermine = m_vecObjects[m_vecSweepers[sweeper_no]->getClosestSupermine ()]->getPosition();
-	return i_immediateReward;	
+	//if (m_vecSweepers[sweeper_no]->isDead())
+	//	return -100.0;
+	//else if (collision != m_vecObjects.end() && (*collision)->getType() == CDiscCollisionObject::SuperMine)
+	//	return -400.0;
+	//else
+	//	return -1.0;
 }
 /**
 The update method. Main loop body of our Q Learning implementation
@@ -66,18 +82,23 @@ bool CQLearningController::Update(void)
 {
 	//m_vecSweepers is the array of minesweepers
 	//everything you need will be m_[something] ;)
-	uint cDead = std::count_if(m_vecSweepers.begin(),
-							   m_vecSweepers.end(),
-						       [](CDiscMinesweeper * s)->bool{
-								return s->isDead();
-							   });
-	if (cDead == CParams::iNumSweepers){
-		printf("All dead ... skipping to next iteration\n");
+	uint cDead = std::count_if(m_vecSweepers.begin(), m_vecSweepers.end(),
+		[](CDiscMinesweeper * s)->bool{	return s->isDead(); });
+	int collectedMines = std::count_if(m_vecObjects.begin(), m_vecObjects.end(),
+		[](CDiscCollisionObject * s)->bool { return s->getType() == CDiscCollisionObject::Mine && s->isDead(); });
+	
+	
+	if (cDead == CParams::iNumSweepers || collectedMines == CParams::iNumMines )
 		m_iTicks = CParams::iNumTicks;
+	if (m_iTicks == CParams::iNumTicks) {
+		std::cout << "[ITER " << m_iIterations << "]\t" ;
+		std::cout << ((CParams::iNumMines != 0) ? (int(collectedMines * 100 / CParams::iNumMines)) : 0) << "% Success RATE ; ";
+		std::cout << ((CParams::iNumSweepers != 0) ? (int(cDead * 100 / CParams::iNumSweepers)) : 0) << "% Death RATE" << std::endl;
 	}
-
 	for (int sw = 0; sw < CParams::iNumSweepers; ++sw){
-		if (m_vecSweepers[sw]->isDead()) 
+		SVector2D<int> disc_posSweeper = m_vecSweepers[sw]->Position();
+		int iCurrentState = int(disc_posSweeper.x / CParams::iGridCellDim) * _grid_size_y  + int (disc_posSweeper.y / CParams::iGridCellDim);
+		if (m_vecSweepers[sw]->isDead())
 			continue;
 		/**
 		Q-learning algorithm according to:
@@ -85,25 +106,27 @@ bool CQLearningController::Update(void)
 		*/
 		//1:::Observe the current state:
 		// get possible actions at current state
-		//TODO
-		SVector2D<int> disc_posSweeper = m_vecSweepers[sw]->Position();
-		disc_posSweeper.x = (int)(disc_posSweeper.x / CParams::iGridCellDim);
-		disc_posSweeper.y = (int)(disc_posSweeper.y / CParams::iGridCellDim);
-		int iCurrentState = disc_posSweeper.x * CParams::iGridCellDim + disc_posSweeper.y;
-
+		// m_qTable[sw][iCurrentState][4] = double(m_iIterations + 1);
+		m_iCollectedMines[sw] = m_vecSweepers[sw]->MinesGathered();
 		//2:::Select action with highest historic return:
-		//TODO
-		double maxObservableAction = MIN_REWARD - 1;
 		ROTATION_DIRECTION nextAction = ROTATION_DIRECTION::EAST;
-		int maxAction = -1;
-		for (int i = 0 ; i < 4 ; i++) {
-			if (maxObservableAction < m_qTable [sw][iCurrentState][i]) {
-				maxObservableAction =  m_qTable [sw][iCurrentState][i];
-				maxAction = i;
-			}
+		// implementing soft max
+		std::transform(m_qTable[sw][iCurrentState], m_qTable[sw][iCurrentState] + 4, m_qTable[sw][iCurrentState] + 4, 
+			[](double act)->double { return exp(act / TEMPERATURE); });
+		double actions_sum = 0.0;
+		std::accumulate(m_qTable[sw][iCurrentState] + 4, m_qTable[sw][iCurrentState] + 8, actions_sum);
+		if (actions_sum)
+			std::transform(m_qTable[sw][iCurrentState] + 4, m_qTable[sw][iCurrentState] + 8, m_qTable[sw][iCurrentState] + 4,
+				[&actions_sum](double prob)->double { return prob/actions_sum; });
+		double max = -999999;
+		for (int i = 0; i < 4; i++ ) {
+			if (m_qTable[sw][iCurrentState][i + 4]  > max && m_qTable[sw][iCurrentState][i + 8] != m_iIterations + 1) {
+				nextAction = (ROTATION_DIRECTION)(i);
+				max = m_qTable[sw][iCurrentState][i];
+			} /*else if (m_qTable[sw][iCurrentState][i + 4] == max)
+				nextAction = (RandBool()) ? (ROTATION_DIRECTION)(i) : nextAction;*/
 		}
-		if (maxAction != -1)
-			nextAction = (ROTATION_DIRECTION) maxAction;
+		m_qTable[sw][iCurrentState][nextAction + 8] = m_iIterations + 1;
 		m_vecSweepers[sw]->setRotation (nextAction); 
 		//now call the parents update, so all the sweepers fulfill their chosen action
 	}
@@ -111,29 +134,21 @@ bool CQLearningController::Update(void)
 	CDiscController::Update(); //call the parent's class update. Do not delete this.
 	
 	for (int sw = 0; sw < CParams::iNumSweepers; ++sw){
-		if (m_vecSweepers[sw]->isDead()) 
-			continue;
 		//TODO:compute your indexes.. it may also be necessary to keep track of the previous state
 		//3:::Observe new state:
 		//TODO
-		SVector2D<int> disc_posSweeper = m_vecSweepers[sw]->PrevPosition();
-		disc_posSweeper.x = (int)(disc_posSweeper.x / CParams::iGridCellDim);
-		disc_posSweeper.y = (int)(disc_posSweeper.y / CParams::iGridCellDim);
-		int iPreviousState = disc_posSweeper.x * CParams::iGridCellDim + disc_posSweeper.y;
+		SVector2D<int> disc_prevSweeper (m_vecSweepers[sw]->PrevPosition());
+		int iPreviousState = int(disc_prevSweeper.x / CParams::iGridCellDim) * _grid_size_y + int(disc_prevSweeper.y / CParams::iGridCellDim);
 
-		disc_posSweeper = m_vecSweepers[sw]->Position();
-		disc_posSweeper.x = (int)(disc_posSweeper.x / CParams::iGridCellDim);
-		disc_posSweeper.y = (int)(disc_posSweeper.y / CParams::iGridCellDim);
-		int iCurrentState = disc_posSweeper.x * CParams::iGridCellDim + disc_posSweeper.y;
-		
+		SVector2D<int> disc_posSweeper (m_vecSweepers[sw]->Position());
+		int iCurrentState = int(disc_posSweeper.x / CParams::iGridCellDim) * _grid_size_y + int(disc_posSweeper.y / CParams::iGridCellDim);
+
 		ROTATION_DIRECTION currentDirection = m_vecSweepers[sw]->getRotation();
-		double valueIteration = MIN_REWARD - 1; 
-		for (int i = 0; i < 4 ; i ++ ) {
-			valueIteration = (valueIteration < m_qTable[sw][iCurrentState][i]) ?  m_qTable[sw][iCurrentState][i] : valueIteration;
-		}
-		double reward = R (disc_posSweeper.x, disc_posSweeper.y, sw);
-		m_qTable [sw][iPreviousState][currentDirection] = (1 - LEARNING_FACTOR) * m_qTable [sw][iPreviousState][currentDirection] + LEARNING_FACTOR * (reward - DISCOUNT_FACTOR * valueIteration);
 
+		auto max_possible_state = std::max_element(m_qTable[sw][iCurrentState], m_qTable[sw][iCurrentState] + 4);
+		double reward = R(m_vecSweepers[sw]->Position().x, m_vecSweepers[sw]->Position().y, sw);
+		m_qTable [sw][iPreviousState][currentDirection] = (1 - LEARNING_FACTOR) * m_qTable [sw][iPreviousState][currentDirection] 
+			+ LEARNING_FACTOR * (reward + DISCOUNT_FACTOR * (*max_possible_state));
 	}
 	return true;
 }
@@ -147,4 +162,6 @@ CQLearningController::~CQLearningController(void)
 		delete [] m_qTable[i];
 	}
 	delete[] m_qTable;
+	delete[] m_iCollectedMines;
 }
+

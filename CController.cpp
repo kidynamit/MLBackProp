@@ -86,16 +86,16 @@ void CController::PlotStats(HDC surface)
     //plot the graph for the best MinesGathered
     float x = 0;
     
-    m_OldPen = (HPEN)SelectObject(surface, m_RedPen);
+    //m_OldPen = (HPEN)SelectObject(surface, m_RedPen);
 
-    MoveToEx(surface, 0, cyClient, NULL);
-    
-    for (int i=0; i<m_vecMostMinesGathered.size(); ++i)
-    {
-       LineTo(surface, x, cyClient - VSlice*m_vecMostMinesGathered[i]);
+    //MoveToEx(surface, 0, cyClient, NULL);
+    //
+    //for (int i=0; i<m_vecMostMinesGathered.size(); ++i)
+    //{
+    //   LineTo(surface, x, cyClient - VSlice*m_vecMostMinesGathered[i]);
 
-       x += HSlice;
-    }
+    //   x += HSlice;
+    //}
 
     //plot the graph for the average MinesGathered
     x = 0;
@@ -109,7 +109,18 @@ void CController::PlotStats(HDC surface)
        LineTo(surface, (int)x, (int)(cyClient - VSlice*m_vecAvMinesGathered[i]));
 
        x += HSlice;
-    }
+	}
+	x = 0;
+	SelectObject(surface, m_GreenPen);
+
+	MoveToEx(surface, 0, cyClient, NULL);
+
+	for (int i = 0; i<m_vecDeaths.size(); ++i)
+	{
+		LineTo(surface, (int)x, (int)(cyClient - VSlice*(m_vecDeaths[i])));
+
+		x += HSlice;
+	}
 
     //replace the old pen
     SelectObject(surface, m_OldPen);

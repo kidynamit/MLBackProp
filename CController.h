@@ -1,7 +1,7 @@
 #ifndef CCONTROLLER_H
 #define CCONTROLLER_H
 
-#define SIMULATION_LOG_ITERATION_CUTOFF		100
+
 
 //------------------------------------------------------------------------
 //

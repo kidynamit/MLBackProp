@@ -20,7 +20,7 @@
 #include "CMinesweeper.h"
 using namespace std;
 
-enum ROTATION_DIRECTION {NORTH=1, SOUTH=2, EAST=0, WEST=3};
+enum ROTATION_DIRECTION {NORTH=1, SOUTH=3, EAST=0, WEST=2};
 class CDiscMinesweeper:public CMinesweeper
 {
 
@@ -50,15 +50,14 @@ public:
 	void			WorldTransform(vector<SPoint> &sweeper);
 
 	//checks to see if the minesweeper has 'collected' a mine
-	int       CheckForObject(vector<CDiscCollisionObject*> &objects, int size);
+	int       CheckForObject(vector<CDiscCollisionObject*> &objects, int size=CParams::iSweeperScale);
 
 	void			Reset();
   
 
 	//-------------------accessor functions
 	SVector2D<int>	Position()const{return SVector2D<int>(m_vPosition.x,m_vPosition.y);}
-	SVector2D<int>	PrevPosition()const{return SVector2D<int>(m_vPrevPosition.x,m_vPrevPosition.y);}
-  
+	SVector2D<int>	PrevPosition()const{ return SVector2D<int>(m_vPrevPosition.x, m_vPrevPosition.y); }  
 };
 
 

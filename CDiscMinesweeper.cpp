@@ -95,43 +95,7 @@ bool CDiscMinesweeper::Update(vector<CDiscCollisionObject*> &objects)
 //-----------------------------------------------------------------------
 void CDiscMinesweeper::GetClosestObjects(vector<CDiscCollisionObject*> &objects)
 {
-	double			closest_mine_so_far = 99999, closest_rock_so_far = 99999, closest_super_mine_so_far = 99999;
-
-	SVector2D<int>		vClosestObject(0, 0);
-
-	//cycle through mines to find closest
-	for (int i=0; i<objects.size(); i++)
-	{
-		if (objects[i]->isDead()) continue; //skip if object was destroyed earlier
-		double len_to_object = Vec2DLength<int>(objects[i]->getPosition() - m_vPosition);
-
-		switch(objects[i]->getType()){
-		case CCollisionObject::ObjectType::Mine:
-			if (len_to_object < closest_mine_so_far)
-			{
-				closest_mine_so_far	= len_to_object;
-				vClosestObject	= objects[i]->getPosition()-m_vPosition;
-				m_iClosestMine = i;
-			}
-			break;
-		case CCollisionObject::ObjectType::Rock:
-			if (len_to_object < closest_rock_so_far)
-			{
-				closest_rock_so_far	= len_to_object;
-				vClosestObject	= objects[i]->getPosition()-m_vPosition;
-				m_iClosestRock = i;
-			}
-			break;
-		case CCollisionObject::ObjectType::SuperMine:
-			if (len_to_object < closest_super_mine_so_far)
-			{
-				closest_super_mine_so_far = len_to_object;
-				vClosestObject	= objects[i]->getPosition()-m_vPosition;
-				m_iClosestSupermine = i;
-			}
-			break;
-		}
-	}
+	return;
 }
 //----------------------------- CheckForObject -----------------------------
 //
@@ -140,28 +104,18 @@ void CDiscMinesweeper::GetClosestObjects(vector<CDiscCollisionObject*> &objects)
 //-----------------------------------------------------------------------
 int CDiscMinesweeper::CheckForObject(vector<CDiscCollisionObject*> &objects, int size)
 {
-	SVector2D<int> DistToObject = m_vPosition - objects[m_iClosestMine]->getPosition();
-		
-	if (Vec2DLength<int>(DistToObject) < size+5)
-	{
-			return m_iClosestMine;
-	}
+	std::vector<CDiscCollisionObject *>::iterator collision = std::find_if(objects.begin(), objects.end(),  
+		[this](CDiscCollisionObject * obj)->bool 
+	{ 
+		return !obj->isDead() && 
+			obj->getPosition().x == this->Position().x && 
+			obj->getPosition().y ==  this->Position().y;
+	});
 
-	DistToObject = m_vPosition - objects[m_iClosestRock]->getPosition();
-		
-	if (Vec2DLength<int>(DistToObject) < size+5)
-	{
-			return m_iClosestRock;
-	}
-
-	DistToObject = m_vPosition - objects[m_iClosestSupermine]->getPosition();
-		
-	if (Vec2DLength<int>(DistToObject) < size+5)
-	{
-			return m_iClosestSupermine;
-	}
-
-  return -1;
+	if (collision == objects.end())
+		return -1;
+	else
+		return std::distance(objects.begin(), collision );
 }
 //-----------------------------------------------------------------------
 // Getters and setters for rotation force and speed
