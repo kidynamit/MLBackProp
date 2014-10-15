@@ -1,9 +1,9 @@
-[TASK] Q-Learning: The Beginning of RL
+[TASK] Evolutionary Algorithm: initial commit
 
 Resolves: NONE
 
-Releases: Completed Qlearning prac
+Releases: Implemented selection operators and fitness function	
 
-TODO: 
+TODO: Perfect the fitness function
 
 WARNING:

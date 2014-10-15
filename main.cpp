@@ -23,7 +23,7 @@
 	typedef CBackPropController PRAC_ALGORITHM; //Backpropagation Algorithm
 	typedef CQLearningController PRAC_ALGORITHM; //Q-Learning Algorithm
 */
-typedef CQLearningController PRAC_ALGORITHM; //Backpropagation Algorithm
+typedef CEAController PRAC_ALGORITHM; //Backpropagation Algorithm
 
 
 

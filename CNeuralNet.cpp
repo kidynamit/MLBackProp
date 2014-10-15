@@ -18,16 +18,23 @@
 /**
  A struct to create the artificial neuron with the number of inputs and teh weighting for each input
 */
-SNeuron::SNeuron(int numInputs_) : numInputs(numInputs_+1) // + 1 is For the bias
+SNeuron::SNeuron(int numInputs_, double minWeight, double maxWeight) : numInputs(numInputs_) // + 1 is For the bias
 {
+	if (maxWeight < minWeight) {
+		maxWeight = MAX_WEIGHTS;
+		minWeight = MIN_WEIGHTS;
+	}
 	for (int i = 0; i < numInputs; ++i) {
+		int LIMIT = 100000;
+		// double w = minWeight + (maxWeight - minWeight)* (RandInt(0, LIMIT) / LIMIT);
 		double w = RandomClamped();
-		Clamp(w, -MAX_WEIGHTS, MAX_WEIGHTS);
+		Clamp(w, MIN_WEIGHTS, MAX_WEIGHTS);
 		vecWeights.push_back(w);
 		vecPreviousWeights.push_back(0);
 	}
 	partialOutput = 0;
 }
+
 double SNeuron::calculatePartialOutput(void) 
 {
 	partialOutput = 0.0;
@@ -59,12 +66,12 @@ CNeuralNet::CNeuralNet(uint inputLayerSize_, uint hiddenLayerSize_,
 					hiddenLayerSize(hiddenLayerSize_), nHiddenLayers(nHiddenLayers_ < 0 ? 1 : nHiddenLayers_), 
 					learningRate(lRate_), mseCutoff(mse_cutoff_)
 {
-	std::cout << "Creating Neural Network ... " ;
-	std::cout << "INPUT " << inputLayerSize << ", ";
-	std::cout << "HIDDEN " << hiddenLayerSize << ", ";
-	std::cout << "NUM LAYERS " << nHiddenLayers + 1 << ", ";
-	std::cout << "OUTPUT "<< outputLayerSize << std::endl;
-	std::cout.flush();
+	//std::cout << "Creating Neural Network ... " ;
+	//std::cout << "INPUT " << inputLayerSize << ", ";
+	//std::cout << "HIDDEN " << hiddenLayerSize << ", ";
+	//std::cout << "NUM LAYERS " << nHiddenLayers + 1 << ", ";
+	//std::cout << "OUTPUT "<< outputLayerSize << std::endl;
+	//std::cout.flush();
 	initWeights();
 }
 /**
@@ -79,10 +86,10 @@ CNeuralNet::~CNeuralNet() {
 void CNeuralNet::initWeights(){
 	vecLayers.clear();
 	if (hiddenLayerSize > 0) {
-		vecLayers.push_back(SNeuronLayer(hiddenLayerSize, inputLayerSize));
+		vecLayers.push_back(SNeuronLayer(hiddenLayerSize, inputLayerSize+ 1));
 		for ( int i = 0; i < nHiddenLayers - 1; i++ ) 
-			vecLayers.push_back(SNeuronLayer(hiddenLayerSize, hiddenLayerSize));
-		vecLayers.push_back(SNeuronLayer(outputLayerSize, hiddenLayerSize));
+			vecLayers.push_back(SNeuronLayer(hiddenLayerSize, hiddenLayerSize +1));
+		vecLayers.push_back(SNeuronLayer(outputLayerSize, hiddenLayerSize +1 ));
 	}
 	else 
 	{

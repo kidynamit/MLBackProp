@@ -23,7 +23,7 @@
 using namespace std;
 
 
-class CContMinesweeper:public CMinesweeper
+class CContMinesweeper :public CMinesweeper
 {
 
 private:
@@ -35,17 +35,17 @@ private:
 
 	//its rotation (surprise surprise)
 	double			m_dRotation;
-
 	double			m_dSpeed;
 	//sets the internal closest object variables for the 3 types of objects
 	void GetClosestObjects(vector<CContCollisionObject*> &objects);
+
 public:
-	
-	void setSpeed(double speed,double multiplier=1.0f);
+
+	void setSpeed(double speed, double multiplier = 1.0f);
 	double getSpeed() const;
 	SVector2D<double> getLookAt(void) const;
 	CContMinesweeper();
-	
+
 	//updates the information from the sweepers enviroment
 	bool			Update(vector<CContCollisionObject*> &objects);
 
@@ -56,7 +56,6 @@ public:
 	int       CheckForObject(vector<CContCollisionObject*> &objects, double size);
 
 	void			Reset();
-  
 
 	//-------------------accessor functions
 	SVector2D<double>	Position()const{return m_vPosition;}

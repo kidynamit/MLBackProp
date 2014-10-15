@@ -5,11 +5,13 @@
 #include "CParams.h"
 #include "CBasicEA.h"
 
-class CEAController :
-	public CContController
+#define DIST_MINE_SUPERMINE_ROCK_CUTOFF	10.0
+#define RESOURCE_MULTIPLIER				5.0
+
+class CEAController : public CContController
 {
 protected:
-
+	std::vector<CNeuralNet *> genomes;
 public:
 	CEAController(HWND hwndMain);
 	virtual void InitializeLearningAlgorithm(void);

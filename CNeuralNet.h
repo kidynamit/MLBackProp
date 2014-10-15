@@ -18,7 +18,8 @@
 
 #include "utils.h"
 
-#define MAX_WEIGHTS			0.05
+#define MAX_WEIGHTS			1.0	
+#define MIN_WEIGHTS			-1.0
 #define ACTIVE_RESPONSE		5.0
 #define MOMENTUM_RATE		0.3
 
@@ -30,7 +31,7 @@ struct SNeuron {
 	std::vector<double> vecWeights, vecInputs, vecPreviousWeights;
 	double partialOutput=0.0, errorTerm=0.0;
 	double calculatePartialOutput(void);
-	SNeuron(int numInputs_);
+	SNeuron(int numInputs_,double minWeights=MIN_WEIGHTS, double maxWeights=MAX_WEIGHTS );
 };
 
 struct SNeuronLayer {

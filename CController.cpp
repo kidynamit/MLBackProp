@@ -117,7 +117,7 @@ void CController::PlotStats(HDC surface)
 
 	for (int i = 0; i<m_vecDeaths.size(); ++i)
 	{
-		LineTo(surface, (int)x, (int)(cyClient - VSlice*(m_vecDeaths[i])));
+		LineTo(surface, (int)x, (int)(cyClient - VSlice*(m_vecDeaths[i] / CParams::iNumSweepers)));
 
 		x += HSlice;
 	}

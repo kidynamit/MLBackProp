@@ -11,6 +11,8 @@ protected:
 	double			m_dMinesGathered;
 	//the scale of the sweeper when drawn
 	double			m_dScale;
+	int				m_iTimeOfDeath  = -1;
+
 
 	//index position of closest mine
 	int			m_iClosestMine;
@@ -28,12 +30,13 @@ public:
 	void		IncrementMinesGathered(){++m_dMinesGathered;}
 	double		MinesGathered()const{return m_dMinesGathered;}
 	void		Reset();
-	void		die();
+	void		die(int timeofdeath = 0);
 	bool		isDead() const;
 	int			getClosestMine() const;
 	int			getClosestRock() const;
 	int			getClosestSupermine() const;
 	int			getTargetMine() const;
+	int			getTimeOfDeath() const;
 	void		setTargetMine(int iMine);
 };
 

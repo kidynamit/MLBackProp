@@ -113,24 +113,21 @@ bool CBackPropController::Update(void)
 		//compute, the dot between the look vector and vector to the closest mine:
 
 		double dot_target_mine = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getTargetMine()]);
-		double dot_rock = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getClosestRock()]);
 		double dot_supermine = dot_between_vlook_and_vObject(**s, *m_vecObjects[(*s)->getClosestSupermine()]);
 
-		double dist_rock = Vec2DLength(m_vecObjects[(*s)->getClosestRock()]->getPosition() - (*s)->Position());
+
 		double dist_target_mine = Vec2DLength(m_vecObjects[(*s)->getTargetMine()]->getPosition() - (*s)->Position());
 		double dist_supermine = Vec2DLength(m_vecObjects[(*s)->getClosestSupermine()]->getPosition() - (*s)->Position());
 
 		double dist_mine_supermine = Vec2DLength(m_vecObjects[(*s)->getClosestMine()]->getPosition() - m_vecObjects[(*s)->getClosestSupermine()]->getPosition());
-		double dist_mine_rock = Vec2DLength(m_vecObjects[(*s)->getClosestMine()]->getPosition() - m_vecObjects[(*s)->getClosestRock()]->getPosition());
 
-		double dot_supermine_or_rock = ((dist_rock < VIEWING_RADIUS || dist_supermine < VIEWING_RADIUS) ?
-			(dist_rock > dist_supermine ? dot_supermine : dot_rock) : -1);
-		double dist_mine_supermine_or_rock_ratio = min(dist_mine_rock, dist_mine_supermine) / DIST_MINE_SUPERMINE_ROCK_CUTOFF;
+		double dot_supermine_or_rock = dot_supermine;
+		double dist_mine_supermine_or_rock_ratio = dist_mine_supermine / DIST_MINE_SUPERMINE_ROCK_CUTOFF;
 
-		(*s)->setSpeed(min(dist_target_mine / 2, min(dist_rock, dist_supermine)), int (resource_speed_multiplier) );
+		(*s)->setSpeed(min(dist_target_mine / 2, dist_supermine), int (resource_speed_multiplier) );
 	
 		Clamp(dist_mine_supermine_or_rock_ratio, 0, 0.5);
-		Clamp(dot_supermine_or_rock, 0, 0.5);
+		Clamp(dot_supermine_or_rock, 0.5,1.0);
 		Clamp(dot_target_mine, 0.5, 1);
 		
 		double dots[3] = { dot_target_mine, dot_supermine_or_rock, dist_mine_supermine_or_rock_ratio };
@@ -142,29 +139,16 @@ bool CBackPropController::Update(void)
 				m_vecObjects[(*s)->getTargetMine()]->getPosition().y);
 			(*s)->turn(pt, 1 );
 		} else if (response == 1) {//turn away from a rock or supermine
-			if (dist_rock < dist_supermine) {
-				SPoint pt(m_vecObjects[(*s)->getClosestRock()]->getPosition().x,
-					m_vecObjects[(*s)->getClosestRock()]->getPosition().y);
-				(*s)->turn(pt, 1 , false);
-			} else {
-				SPoint pt(m_vecObjects[(*s)->getClosestSupermine()]->getPosition().x,
-					m_vecObjects[(*s)->getClosestSupermine()]->getPosition().y);
-				(*s)->turn(pt, 1, false);
-			}
+			SPoint pt(m_vecObjects[(*s)->getClosestSupermine()]->getPosition().x,
+			m_vecObjects[(*s)->getClosestSupermine()]->getPosition().y);
+			(*s)->turn(pt, 1, false);
 		} else if (response == 2) {
-			if (dist_mine_rock < dist_mine_supermine) {
-				SPoint pt(m_vecObjects[(*s)->getClosestRock()]->getPosition().x,
-					m_vecObjects[(*s)->getClosestRock()]->getPosition().y);
+			SPoint pt(m_vecObjects[(*s)->getClosestSupermine()]->getPosition().x,
+				m_vecObjects[(*s)->getClosestSupermine()]->getPosition().y);
+			if (resource_ratio < 0.3)
+				(*s)->turn(pt, 1 );  // SUICIDE!!
+			else
 				(*s)->turn(pt, 1, false);
-			}
-			else {
-				SPoint pt(m_vecObjects[(*s)->getClosestSupermine()]->getPosition().x,
-					m_vecObjects[(*s)->getClosestSupermine()]->getPosition().y);
-				if (resource_ratio < 0.3)
-					(*s)->turn(pt, 1 );  // SUICIDE!!
-				else
-					(*s)->turn(pt, 1, false);
-			}
 			m_vecObjects[(*s)->getClosestMine()]->setAttainable(false);
 
 		} else if (response == -1) {

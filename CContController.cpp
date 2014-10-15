@@ -117,7 +117,7 @@ bool CContController::Update()
 					//destroy the sweeper until it reincarnates in the next round
 					//CContCollisionObject* oldObject = m_vecObjects[GrabHit];
 					//oldObject->die();
-					(m_vecSweepers[i])->die();
+					(m_vecSweepers[i])->die(m_iTicks);
 					m_vecObjects[m_vecSweepers[i]->getTargetMine()]->setTarget(false);
 					break;
 					}
@@ -127,7 +127,7 @@ bool CContController::Update()
 					CContCollisionObject* oldObject = m_vecObjects[GrabHit];
 					oldObject->die();
 																
-					(m_vecSweepers[i])->die();
+					(m_vecSweepers[i])->die(m_iTicks);
 					m_vecObjects[m_vecSweepers[i]->getTargetMine()]->setTarget(false);
 					break;
 					}

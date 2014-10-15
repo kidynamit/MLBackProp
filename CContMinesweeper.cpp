@@ -154,25 +154,32 @@ void CContMinesweeper::GetClosestObjects(vector<CContCollisionObject*> &objects)
 //-----------------------------------------------------------------------
 int CContMinesweeper::CheckForObject(vector<CContCollisionObject*> &objects, double size)
 {
-	SVector2D<double> DistToObject = m_vPosition - objects[m_iClosestMine]->getPosition();
-		
-	if (Vec2DLength<double>(DistToObject) < (size + 5))
-	{
+	SVector2D<double> DistToObject;
+	
+	if (CParams::iNumMines > 0) {
+		DistToObject = m_vPosition - objects[m_iClosestMine]->getPosition();
+		if (Vec2DLength<double>(DistToObject) < (size + 5))
+		{
 			return m_iClosestMine;
+		}
 	}
 
-	DistToObject = m_vPosition - objects[m_iClosestRock]->getPosition();
-		
-	if (Vec2DLength<double>(DistToObject) < (size + 5))
-	{
+	if (CParams::iNumRocks > 0) {
+		DistToObject = m_vPosition - objects[m_iClosestRock]->getPosition();
+
+		if (Vec2DLength<double>(DistToObject) < (size + 5))
+		{
 			return m_iClosestRock;
+		}
 	}
 
-	DistToObject = m_vPosition - objects[m_iClosestSupermine]->getPosition();
-		
-	if (Vec2DLength<double>(DistToObject) < (size + 5))
-	{
+	if (CParams::iNumSuperMines  > 0) {
+		DistToObject = m_vPosition - objects[m_iClosestSupermine]->getPosition();
+
+		if (Vec2DLength<double>(DistToObject) < (size + 5))
+		{
 			return m_iClosestSupermine;
+		}
 	}
 
   return -1;
