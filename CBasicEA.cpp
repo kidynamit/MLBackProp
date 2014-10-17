@@ -55,7 +55,7 @@ void CBasicEA::computeFitness(const std::vector<CContMinesweeper *> & parent_swe
 	stats[0] = averageFitness; 
 	stats[2] = minFitness;
 	stats[3] = maxFitness;
-	stats[1]= parent_sweepers.size() != 0 ? sqrt((variance / parent_sweepers.size()) - (stats[3] * stats[3]) ): 0.0; // standard deviation
+	stats[1]= parent_sweepers.size() != 0 ? sqrt((variance / parent_sweepers.size()) - (stats[0] * stats[0]) ): 0.0; // standard deviation
 
 }
 /**
@@ -84,12 +84,14 @@ void CBasicEA::selection_crossover_mutate(std::vector<ParentAndFitness> & parent
 	//		*parents[parents.size() - 1 - i].parent_genome, networkSize);
 	//	mutate(*parents[parents.size() - 1 - i].parent_genome);
 	//}
+	
+	// double cutoff = stats[0] - 0.5*stats[1];
 	std::cout << "\nSelection crossover and mutation ... " << std::endl;
 	for (int i = 0; i < parents.size(); i++) {
 		assert(i + 1 < parents.size());
 		if (parents[parents.size() - 1 - i].fitness == stats[2]) {
 			if (parents[i].fitness == stats[2] || parents[i + 1].fitness == stats[2])
-				 break;
+				break;
 			std::cout << "couple: (" << parents[i].fitness << ", " << parents[i].parent_genome << 
 				")\t+\t(" << parents[i + 1].fitness << ", " << parents[i + 1].parent_genome <<")"<< std::endl;
 
