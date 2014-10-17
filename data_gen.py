@@ -9,7 +9,7 @@ from math import acos, pi
 
 no_training_samples_per_dim = 50
 no_inputs = 2
-no_hidden = 3
+no_hidden = 4
 no_layers = 1
 no_out = 2
 learning_rate = 0.3

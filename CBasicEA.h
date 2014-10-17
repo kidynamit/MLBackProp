@@ -18,7 +18,7 @@ typedef struct {
 class CBasicEA
 {
 private:
-	static void crossover(const CNeuralNet & genotypeA, const CNeuralNet & genotypeB, CNeuralNet & offspring1, CNeuralNet & offspring2, const int networkSize);
+	static void crossover(const CNeuralNet & genotypeA, const CNeuralNet & genotypeB, CNeuralNet & offspring1, const int networkSize);
 	static void mutate(CNeuralNet & genotypeA);
 
 public:

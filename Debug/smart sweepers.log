@@ -1,4 +1,4 @@
-﻿Build started 16/10/2014 01:41:15.
+﻿Build started 17/10/2014 03:42:38.
      1>Project "C:\Users\Paul\Documents\MLBackProp\smart sweepers.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /Gy- /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug\\" /Fd".\Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt CBasicEA.cpp
@@ -6,10 +6,11 @@
      1>c:\users\paul\documents\mlbackprop\c2dmatrix.h(102): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\paul\documents\mlbackprop\c2dmatrix.h(108): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
      1>c:\users\paul\documents\mlbackprop\c2dmatrix.h(110): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\paul\documents\mlbackprop\cbasicea.cpp(79): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\paul\documents\mlbackprop\cbasicea.cpp(104): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\paul\documents\mlbackprop\cbasicea.cpp(105): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\paul\documents\mlbackprop\cbasicea.cpp(106): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\paul\documents\mlbackprop\cbasicea.cpp(88): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\paul\documents\mlbackprop\cbasicea.cpp(89): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\paul\documents\mlbackprop\cbasicea.cpp(118): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\paul\documents\mlbackprop\cbasicea.cpp(119): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\paul\documents\mlbackprop\cbasicea.cpp(120): warning C4018: '<' : signed/unsigned mismatch
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\Debug\smart sweepers.exe" /INCREMENTAL /NOLOGO odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:".\Debug\smart sweepers.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\Debug\smart sweepers.lib" /MACHINE:X86 /SAFESEH .\Debug\Script1.res
          .\Debug\C2DMatrix.obj
@@ -36,4 +37,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.52
+Time Elapsed 00:00:05.47

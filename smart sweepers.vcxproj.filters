@@ -137,9 +137,6 @@
     <ClInclude Include="CContCollisionObject.h">
       <Filter>Header Files\Continuous Environment</Filter>
     </ClInclude>
-    <ClInclude Include="CContMinesweeper.h">
-      <Filter>Header Files\Continuous Environment</Filter>
-    </ClInclude>
     <ClInclude Include="CMinesweeper.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
@@ -175,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="CQLearningController.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CContMinesweeper.h">
+      <Filter>Header Files\Continuous Environment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

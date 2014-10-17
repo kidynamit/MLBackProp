@@ -1,7 +1,6 @@
 #include "CContController.h"
 
-#define SIMULATION_LOG_ITERATION_CUTOFF		200
-
+#define SIMULATION_LOG_ITERATION_CUTOFF	100
 CContController::CContController(HWND hwndMain):
 	CController(hwndMain)
 {

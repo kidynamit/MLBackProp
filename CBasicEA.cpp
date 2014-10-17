@@ -38,9 +38,9 @@ void CBasicEA::computeFitness(const std::vector<CContMinesweeper *> & parent_swe
 		ParentAndFitness result;
 		result.parent_genome = genome;
 		// TODO calculate fitness 
+		double liveliness = (sweeper->getTimeOfDeath() > 0) ? (sweeper->getTimeOfDeath() / CParams::iNumTicks) : 1.5;
 		if (CParams::iNumMines > 0)
-			result.fitness = ((sweeper->MinesGathered()) / (CParams::iNumMines)) * MAX_FITNESS;
-
+			result.fitness = ((sweeper->MinesGathered())) * (((sweeper->MinesGathered()) / (CParams::iNumMines)) * MAX_FITNESS + liveliness * MIN_FITNESS);
 		//if (CParams::iNumTicks > 0)
 		//	result.fitness += (sweeper->getTimeOfDeath() > 0 ) ? (sweeper->getTimeOfDeath() / CParams::iNumTicks )* MIN_FITNESS : MIN_FITNESS;
 	
@@ -55,7 +55,7 @@ void CBasicEA::computeFitness(const std::vector<CContMinesweeper *> & parent_swe
 	stats[0] = averageFitness; 
 	stats[2] = minFitness;
 	stats[3] = maxFitness;
-	stats[1]= parent_sweepers.size() != 0 ? sqrt((variance / parent_sweepers.size()) - (stats[3] * stats[3]) ): 0.0;
+	stats[1]= parent_sweepers.size() != 0 ? sqrt((variance / parent_sweepers.size()) - (stats[3] * stats[3]) ): 0.0; // standard deviation
 
 }
 /**
@@ -64,7 +64,7 @@ Selects the fittest of the population and use selection operators on them to spa
 void CBasicEA::selection_crossover_mutate(std::vector<ParentAndFitness> & parents, double * stats) {
 	// The best are those that above average;
 	// sort the list 
-	const int ELITIST_LIMIT = 12;
+	const int ELITIST_LIMIT = 8;
 	std::sort(parents.begin(), parents.end(),
 		[](ParentAndFitness left, ParentAndFitness right)->bool
 	{ return left.fitness > right.fitness; }); // max to min
@@ -72,27 +72,41 @@ void CBasicEA::selection_crossover_mutate(std::vector<ParentAndFitness> & parent
 	// get the networks size 
 	// ASSUMPTION: no variable length genotypes
 	int networkSize = 0;
-	for (SNeuronLayer snl : parents[0].parent_genome->vecLayers) {
+	for (SNeuronLayer snl : parents[0].parent_genome->vecLayers)
 		networkSize += snl.numInputsPerNeuron * snl.numNeurons;
-	}
-	for (int i = 0; i < ELITIST_LIMIT; i += 2) {
+
+	//for (int i = 0; i < ELITIST_LIMIT; i++) {
+	//	assert(i + 1 < parents.size());
+	//	if (parents[i].fitness == 0 || parents[i + 1].fitness == 0)
+	//		break;
+	//	// std::cout <<"couple: " << parents[i].fitness << ", " << parents[i].parent_genome  << "|+|" << parents[i + 1].fitness  << ", " << parents[i + 1].parent_genome << std::endl;
+	//	crossover(*parents[i].parent_genome, *parents[i + 1].parent_genome, 
+	//		*parents[parents.size() - 1 - i].parent_genome, networkSize);
+	//	mutate(*parents[parents.size() - 1 - i].parent_genome);
+	//}
+	std::cout << "\nSelection crossover and mutation ... " << std::endl;
+	for (int i = 0; i < parents.size(); i++) {
 		assert(i + 1 < parents.size());
-		if (parents[i].fitness == 0 || parents[i + 1].fitness == 0)
+		if (parents[parents.size() - 1 - i].fitness == stats[2]) {
+			if (parents[i].fitness == stats[2] || parents[i + 1].fitness == stats[2])
+				 break;
+			std::cout << "couple: (" << parents[i].fitness << ", " << parents[i].parent_genome << 
+				")\t+\t(" << parents[i + 1].fitness << ", " << parents[i + 1].parent_genome <<")"<< std::endl;
+
+			crossover(*parents[i].parent_genome, *parents[i + 1].parent_genome,
+				*parents[parents.size() - 1 - i].parent_genome, networkSize);
+			mutate(*parents[parents.size() - 1 - i].parent_genome);
+		} else
 			break;
-		// std::cout <<"couple: " << parents[i].fitness << ", " << parents[i].parent_genome  << "|+|" << parents[i + 1].fitness  << ", " << parents[i + 1].parent_genome << std::endl;
-		crossover(*parents[i].parent_genome, *parents[i + 1].parent_genome, 
-			*parents[parents.size() - 1 - i].parent_genome, *parents[parents.size() - 1 - i].parent_genome, 
-			networkSize);
-		mutate(*parents[parents.size() - 1 - i].parent_genome);
-		mutate(*parents[parents.size() - 2 - i].parent_genome);
-	}
+	} 
+	std::cout << "Done!" << std::endl;
 } 
 
 /**
 Crossover (exploration) of some sort
 */
 void CBasicEA::crossover(const CNeuralNet & genotypeA, const CNeuralNet & genotypeB,
-	CNeuralNet & offspring1, CNeuralNet & offspring2, const int networkSize)
+	CNeuralNet & offspring1, const int networkSize)
 {
 	assert(genotypeA.vecLayers.size() == genotypeB.vecLayers.size());
 	//TODO:: roll your own 
@@ -108,13 +122,9 @@ void CBasicEA::crossover(const CNeuralNet & genotypeA, const CNeuralNet & genoty
 				if (selectedPoint  > 0) {
 					offspring1.vecLayers[layerL].vecNeurons[neuronN].vecWeights[weightW] =
 						genotypeB.vecLayers[layerL].vecNeurons[neuronN].vecWeights[weightW];
-					offspring2.vecLayers[layerL].vecNeurons[neuronN].vecWeights[weightW] =
-						genotypeA.vecLayers[layerL].vecNeurons[neuronN].vecWeights[weightW];
 				} else {
 					offspring1.vecLayers[layerL].vecNeurons[neuronN].vecWeights[weightW] =
 						genotypeA.vecLayers[layerL].vecNeurons[neuronN].vecWeights[weightW];
-					offspring2.vecLayers[layerL].vecNeurons[neuronN].vecWeights[weightW] =
-						genotypeB.vecLayers[layerL].vecNeurons[neuronN].vecWeights[weightW];
 				}
 			}
 		}
@@ -129,7 +139,7 @@ void CBasicEA::mutate(CNeuralNet & genotypeA)
 	for (SNeuronLayer sl : genotypeA.vecLayers) {
 		for (int i = 0; i < sl.numNeurons; i++) {
 			std::transform ( sl.vecNeurons[i].vecWeights.begin () , sl.vecNeurons[i].vecWeights.end(), sl.vecNeurons[i].vecWeights.begin(), 
-				[](double weight)->double { return (RandBool()) ? -0.05 + 0.1 * (RandInt(0, 100000) / 100000): weight;  });
+				[](double weight)->double { return (RandBool()) ? -1 + 2 * (RandInt(0, 100000) / 100000) : weight;  });
 		}
 	}
 	

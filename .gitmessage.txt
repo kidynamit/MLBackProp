@@ -1,9 +1,9 @@
-[TASK] Evolutionary Algorithm: initial commit
+[TASK] Evolutionary Algorithm: Completed testing and Debugging
 
-Resolves: NONE
+Resolves: Fixed sensory inputs, fitness function and the crossover function
 
-Releases: Implemented selection operators and fitness function	
+Releases: NONE
 
-TODO: Perfect the fitness function
+TODO: change the selection process to remove those that are below the mean - std. dev.
 
 WARNING:
